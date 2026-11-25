@@ -52,6 +52,9 @@ function fuzz(graph, id, { matches = 2000, seed = 1, maxSteps = 800, lenient = f
       const p = room.state.plugin;
       if (p.result?.done) break;
       const open = p.decisions.filter(d => !bots.has(d.actor)), deadlines = p.decisions.map(d => d.deadlineAt).filter(Number.isFinite);
+      // Only engine seats are to move: the host's autoPlay plays a bounded number of steps per call, so call it again while
+      // it gets somewhere; a call that moves nothing is a stall.
+      if (p.decisions.length && !open.length && !deadlines.length && bots.size) { const at = p.step; play(); if (room.state.plugin.step > at) { report.steps++; continue; } }
       if (!p.decisions.length || (!open.length && !deadlines.length)) { if (must) note(report.stalls, { game, step, seed: matchSeed }); break; }
       const before = JSON.stringify(p.state), stepBefore = p.step, roll = rng();
       let done;

@@ -24,6 +24,19 @@ const VCF_DEPTH = 8;
 const VCF_NODES_ATTACK = 150;
 const VCF_NODES_DEFENSE = 25;
 
+// The tunable part as one genome (the Gomoku boss evolves it: lib/games/gomoku/gomoku-boss.js). Without one, bestMove
+// plays exactly the constants above, as the built-in Bot always has.
+const DEFAULT_GENOME = Object.freeze({ attack: ATTACK, defense: DEFENSE, replyWeight: REPLY_WEIGHT, lookahead: LOOKAHEAD_TOP, vcfAttack: VCF_NODES_ATTACK, vcfDefense: VCF_NODES_DEFENSE, jitter: JITTER });
+const TIERS = Object.keys(ATTACK);
+const bounded = (v, lo, hi, d) => typeof v === 'number' && Number.isFinite(v) ? Math.min(hi, Math.max(lo, v)) : d;
+// Any input becomes a usable genome: unknown fields dropped, every number held within sane bounds.
+function genomeOf(g) {
+  if (!g || typeof g !== 'object') return DEFAULT_GENOME;
+  const table = (t, d) => Object.fromEntries(TIERS.map(k => [k, bounded(t?.[k], 0, 1e9, d[k])]));
+  return { attack: table(g.attack, ATTACK), defense: table(g.defense, DEFENSE), replyWeight: bounded(g.replyWeight, 0, 2, REPLY_WEIGHT),
+    lookahead: Math.round(bounded(g.lookahead, 1, 15, LOOKAHEAD_TOP)), vcfAttack: Math.round(bounded(g.vcfAttack, 0, 400, VCF_NODES_ATTACK)), vcfDefense: Math.round(bounded(g.vcfDefense, 0, 200, VCF_NODES_DEFENSE)), jitter: bounded(g.jitter, 0, 0.2, JITTER) };
+}
+
 const REASONS = [
   ['five', 'win', '成五取胜'],
   ['block-five', 'block-five', '堵对方成五'],
@@ -143,10 +156,10 @@ function reasonOf(atk, def) {
 }
 
 // 对方在当前局面下最强一手的进攻分（用于前瞻）
-function bestReplyScore(board, color) {
+function bestReplyScore(board, color, attack = ATTACK) {
   let best = 0;
   for (const [x, y] of candidates(board)) {
-    best = Math.max(best, scoreOf(analyze(board, x, y, color), ATTACK));
+    best = Math.max(best, scoreOf(analyze(board, x, y, color), attack));
   }
   return best;
 }
@@ -193,8 +206,8 @@ function findVCF(board, color, budget, depth = VCF_DEPTH) {
 }
 
 // 选点：返回 { x, y, reason, text }。rng 可注入以便测试稳定复现
-function bestMove(board, color, rng = Math.random) {
-  const opp = color === 1 ? 2 : 1;
+function bestMove(board, color, rng = Math.random, genome = null) {
+  const opp = color === 1 ? 2 : 1, g = genome ? genomeOf(genome) : DEFAULT_GENOME;
   const cands = candidates(board);
   if (!cands.length) {
     if (board[7][7] === 0) return { x: 7, y: 7, reason: 'opening', text: '首手天元' };
@@ -206,32 +219,32 @@ function bestMove(board, color, rng = Math.random) {
   const scored = cands.map(([x, y]) => {
     const atk = analyze(board, x, y, color);
     const def = analyze(board, x, y, opp);
-    return { x, y, atk, def, value: scoreOf(atk, ATTACK) + scoreOf(def, DEFENSE) + centerBonus(x, y) };
+    return { x, y, atk, def, value: scoreOf(atk, g.attack) + scoreOf(def, g.defense) + centerBonus(x, y) };
   }).sort((a, b) => b.value - a.value);
 
   // 成五或堵五没有别的选择
   const top = scored[0];
   if (top.atk.five || top.def.five) return { x: top.x, y: top.y, ...reasonOf(top.atk, top.def) };
-  const vcf = findVCF(board, color, { left: VCF_NODES_ATTACK });
+  const vcf = findVCF(board, color, { left: g.vcfAttack });
   if (vcf) return { x: vcf.x, y: vcf.y, reason: 'vcf', text: '连续冲四抢杀' };
 
   // 前几名各试走一手：走完会让对方走出 VCF 的点垫底
   const quiet = top.value < QUIET_BELOW;
-  const finalists = scored.slice(0, LOOKAHEAD_TOP).map((c) => {
+  const finalists = scored.slice(0, g.lookahead).map((c) => {
     board[c.y][c.x] = color;
-    const loses = !!findVCF(board, opp, { left: VCF_NODES_DEFENSE });
-    const reply = quiet && !loses ? bestReplyScore(board, opp) : 0;
+    const loses = !!findVCF(board, opp, { left: g.vcfDefense });
+    const reply = quiet && !loses ? bestReplyScore(board, opp, g.attack) : 0;
     board[c.y][c.x] = 0;
-    return { ...c, final: loses ? -Infinity : c.value - reply * REPLY_WEIGHT };
+    return { ...c, final: loses ? -Infinity : c.value - reply * g.replyWeight };
   }).sort((a, b) => b.final - a.final);
   // 全部都防不住：退回最高分。有杀棋或必须应对时直接走，不随机
   if (finalists[0].final === -Infinity) return { x: top.x, y: top.y, ...reasonOf(top.atk, top.def) };
   if (!quiet) return { x: finalists[0].x, y: finalists[0].y, ...reasonOf(finalists[0].atk, finalists[0].def) };
   // 平静局面：扣掉对方最强回应后分差很小的随机取一
-  const bar = finalists[0].final - Math.abs(finalists[0].final) * JITTER;
+  const bar = finalists[0].final - Math.abs(finalists[0].final) * g.jitter;
   const close = finalists.filter(c => c.final >= bar && c.final !== -Infinity);
   const pick = close[Math.floor(rng() * close.length)] || finalists[0];
   return { x: pick.x, y: pick.y, ...reasonOf(pick.atk, pick.def) };
 }
 
-module.exports = { bestMove, analyze, SIZE };
+module.exports = { bestMove, analyze, SIZE, DEFAULT_GENOME, genomeOf };

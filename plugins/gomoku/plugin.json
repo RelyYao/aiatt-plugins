@@ -78,5 +78,15 @@
   "limits": {
     "callMs": 500,
     "engineMs": 2000
+  },
+  "config": {
+    "type": "object",
+    "properties": {
+      "params": {
+        "type": "object",
+        "title": "Engine genome (set by the platform for the Gomoku boss)"
+      }
+    },
+    "additionalProperties": false
   }
 }

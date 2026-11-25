@@ -22,8 +22,9 @@ const colorOf = (state, seat) => seat === state.black ? 1 : 2;
 const other = (state, seat) => seat === state.black ? state.white : state.black;
 
 module.exports = definePlugin({
-  setup({ seats }) {
-    return { board: Array.from({ length: SIZE }, () => Array(SIZE).fill(0)), black: seats[0].id, white: seats[1].id, turn: seats[0].id, moves: [], status: 'playing', winner: null, resultReason: null };
+  setup({ seats, config }) {
+    // config.params: the engine genome for the platform-played seat (the Gomoku boss's champion); absent for everyone else.
+    return { board: Array.from({ length: SIZE }, () => Array(SIZE).fill(0)), black: seats[0].id, white: seats[1].id, turn: seats[0].id, moves: [], status: 'playing', winner: null, resultReason: null, ...(config && config.params && typeof config.params === 'object' ? { params: ai.genomeOf(config.params) } : {}) };
   },
   // The player to move places or resigns; the other may resign at any time (as in the framework's Gomoku).
   decisions(state) { return state.status === 'playing' ? [{ actor: state.turn, actions: ['place', 'resign'] }, { actor: other(state, state.turn), actions: ['resign'] }] : []; },
@@ -46,7 +47,7 @@ module.exports = definePlugin({
   // A seat the platform plays (the built-in Bot, a platform AI): the same engine the framework's Bot uses.
   engine(state, decision, { rng }) {
     if (!decision.actions.includes('place')) return null;
-    const move = ai.bestMove(state.board, colorOf(state, decision.actor), rng);
+    const move = ai.bestMove(state.board, colorOf(state, decision.actor), rng, state.params || null);
     return { type: 'place', x: move.x, y: move.y };
   },
   view(state) { return state; },
