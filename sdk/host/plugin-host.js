@@ -313,16 +313,18 @@ function view(room, viewerId = null) {
   return { data: { plugin: { id: p.id, version: p.version }, match: p.match, step: p.step, seats: p.seats, me: seated, view: seen.value,
     decisions: p.decisions.map(d => ({ actor: d.actor, deadlineAt: d.deadlineAt, ...(d.actor === seated ? { actions: d.actions } : {}) })), result: p.result } };
 }
-// The values the plugin says only some seats may see (optional secrets(state) → [{ value, visibleTo: [seat ids] }]),
-// for the leak check (lib/plugins/plugin-conformance.js) and audits. A plugin without secrets() declares none.
+// The values the plugin says only some seats may see (optional secrets(state) → [{ value, visibleTo: [seat ids], path? }]),
+// for the leak check (lib/plugins/plugin-conformance.js) and audits. A plugin without secrets() declares none. `path` (keys
+// into the state) lets the check change the value there and see whose view changes, instead of searching for its text.
 function secrets(room) {
   const p = room?.state?.plugin, entry = entryOf(p);
   if (!p || !entry) return fail(404, 'PLUGIN_NOT_RUNNING', 'This room has no plugin');
   if (!entry.has('secrets')) return { data: [] };
   const out = run(entry, 'secrets', [p.state], context(entry, p, { now: Date.now() }));
   if (out.error) return out.error;
-  if (!Array.isArray(out.value) || out.value.some(s => !s || !Array.isArray(s.visibleTo))) return fail(500, 'PLUGIN_BAD_RESULT', 'secrets() must list { value, visibleTo }');
-  return { data: out.value.map(s => ({ value: s.value, visibleTo: s.visibleTo.filter(id => typeof id === 'string') })) };
+  const badPath = path => path !== undefined && (!Array.isArray(path) || !path.length || path.length > 16 || path.some(k => typeof k !== 'string' && !Number.isSafeInteger(k)));
+  if (!Array.isArray(out.value) || out.value.some(s => !s || !Array.isArray(s.visibleTo) || badPath(s.path))) return fail(500, 'PLUGIN_BAD_RESULT', 'secrets() must list { value, visibleTo, path? }; a path is a list of keys into the state');
+  return { data: out.value.map(s => ({ value: s.value, visibleTo: s.visibleTo.filter(id => typeof id === 'string'), ...(s.path ? { path: s.path.slice() } : {}) })) };
 }
 // Replays the match from its seed and action log (archived steps included) and checks it ends in the same state.
 function replay(room) {
@@ -352,5 +354,14 @@ function replay(room) {
   const same = JSON.stringify(state) === JSON.stringify(p.state);
   return { data: { ok: same, steps: log.length - 1, failedAt: same ? null : p.step } };
 }
+// The plugin's view of a state that is not the room's (the leak check changes one secret and compares views). Nothing
+// is stored; the room's own state is not touched.
+function viewOfState(room, state, viewerId = null) {
+  const p = room?.state?.plugin, entry = entryOf(p);
+  if (!p || !entry) return fail(404, 'PLUGIN_NOT_RUNNING', 'This room has no plugin');
+  const seated = p.seats.some(s => s.id === viewerId) ? viewerId : null;
+  const seen = run(entry, 'view', [state, seated], context(entry, p, { now: Date.now() }));
+  return seen.error || { data: seen.value };
+}
 function onResult(listener) { resultListeners.add(listener); return () => resultListeners.delete(listener); }
-module.exports = { register, loadDirectory, ensureBundled, unregister, hasFunction, catalog, manifestFor, has, start, adopt, act, leave, join, conclude, expire, autoPlay, resync, view, secrets, replay, onResult, LOG_KEEP };
+module.exports = { register, loadDirectory, ensureBundled, unregister, hasFunction, catalog, manifestFor, has, start, adopt, act, leave, join, conclude, expire, autoPlay, resync, view, viewOfState, secrets, replay, onResult, LOG_KEEP };

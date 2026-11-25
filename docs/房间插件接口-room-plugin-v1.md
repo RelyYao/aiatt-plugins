@@ -50,7 +50,7 @@ module.exports = definePlugin({
   timeout(state, decision, ctx) { return 动作; },          // 可选：截止时间到了，替这个座位走哪一步
   leave(state, seat, ctx) { return { state, events }; },  // 可选：一个座位彻底离开（背后的人都退出了房间），对局怎么办
   engine(state, decision, ctx) { return 动作 | null; },   // 可选：平台自己走的座位（`kind: bot` 或 `engine: true`：内置 Bot、陪练方）怎么走，和 ai.mode（Agent 座位怎么走、怎么计价）无关；null 表示这个决策点不动
-  secrets(state) { return [{ value, visibleTo: [座位] }]; }, // 可选：哪些值只有哪些座位能看（一致性检查的泄露检查用）
+  secrets(state) { return [{ value, visibleTo: [座位], path }]; }, // 可选：哪些值只有哪些座位能看（泄露检查用）；path 是这个值在状态里的位置，见下
   view(state, viewer) { return 这个人能看到的; },          // 必有；viewer 为 null 是观战
   result(state) { return { done: false } | { done: true, ranking: [[第一名…], [第二名…]], summary, highlights }; },  // 必有
   migrate(state, fromVersion) { return state; },          // 可选（P1 起用于沿用状态）
@@ -66,6 +66,8 @@ module.exports = definePlugin({
 - **房主动作**：平台用 `act(room, 谁, 动作, { host: true })` 担保这个人是房主；动作在 `hostActions` 里时，宿主不查座位和决策点，插件在 `ctx.host` 里看到 `true`，自己决定房主能做什么（卧底：投票截止前只有房主能开票）。
 - **离开**：`leave(room, 座位)` 调插件的 `leave()`，记成一条 `$leave` 日志，重放时同样走 `leave()`。没有 `leave()` 的插件由平台决定（`conclude`）。
 - **中途入座**：`join(room, 座位)` 调插件可选的 `join(state, seat, ctx)`（例如常驻牌桌在两手之间让人坐进来），座位加入本局，记成 `$join` 日志；重放从开局时的座位开始，到 `$join` 再加入。
+
+- **隐藏信息的声明**：`secrets(state)` 每一项写「值 + 谁能看」，最好再给 `path`（从状态根往下的键，例如 `['lot', 'hints', 座位]`）。有 `path` 时，泄露检查把状态里这个位置的值换掉，看不该知道它的人的视图变没变；变了就是泄露（直接显示、换算成别的数、拼进文字都算），别的座位碰巧有同一个数也不会误报。没有 `path` 时按文字在视图里找这个值，适合长而独特的值（词语、牌面串）；小数字会误报，请给 `path`。
 
 ## 4. 宿主做了什么（一次动作）
 
@@ -92,13 +94,15 @@ module.exports = definePlugin({
 
 ## 5. 开发工具
 
+社区仓库里用 SDK：`npx aiatt-plugin check | test | build | dev`（说明见《房间插件-开发者指南》）。平台仓库里也可以用下面的脚本，检查是同一套：
+
 ```bash
 node scripts/plugin-dev.mjs check    <插件目录>   # 清单、打包、沙箱加载、必需的函数
 node scripts/plugin-dev.mjs simulate <插件目录> [--games 20] [--seed 1] [--json]
 node scripts/plugin-dev.mjs build    <插件目录> [--out dist/server.js]   # 沙箱实际运行的单文件，提交审核用
 ```
 
-`simulate` 通过真实的宿主随机对局（`lib/plugins/plugin-conformance.js`），报告：插件出错 / 超时 / 返回格式不对 / 状态超限、对局卡住（没有决策点又没结束）、泄露（`secrets()` 声明的值出现在不该看到的视图或观战视图里）、重放得到的状态不一致（插件用了模块级的可变状态等）。仓库里的插件都要通过（`test/plugins/plugin-conformance.test.js`）。
+`simulate` 通过真实的宿主随机对局（`lib/plugins/plugin-conformance.js`），报告：插件出错 / 超时 / 返回格式不对 / 状态超限、对局卡住（没有决策点又没结束）、泄露（`secrets()` 声明的值出现在不该看到的视图或观战视图里；给了 `path` 的按「换值看视图变不变」判断）、重放得到的状态不一致（插件用了模块级的可变状态等）。仓库里的插件都要通过（`test/plugins/plugin-conformance.test.js`）。
 
 ## 6. 安全边界（现在和以后）
 
@@ -109,3 +113,11 @@ node scripts/plugin-dev.mjs build    <插件目录> [--out dist/server.js]   # �
 
 - 接口版本 `room-plugin@1`；新增能力向后兼容，不兼容的改动升到 `@2`。
 - 对局开局时锁定插件版本（房间里记着 `version`）；宿主当前加载的版本不同时，这个房间的动作返回 `PLUGIN_VERSION_UNAVAILABLE`，不会用新代码去跑旧状态。同时加载多个版本在 P1 迁移时补上。
+
+## 8. 变更记录
+
+只增不改；每次接口增量写一行，链到对应的平台需求。
+
+| 日期 | 变更 | 来源 |
+| --- | --- | --- |
+| 2026-11-25 | `secrets()` 的每一项可以带 `path`；泄露检查对带 `path` 的值改用「换值看视图变不变」，小数字不再误报，换算后的泄露也能发现。宿主新增 `viewOfState()` 供检查使用 | 试点插件「暗拍行」：估价和出价是小整数，按文字查找报了 3969 处误报 |

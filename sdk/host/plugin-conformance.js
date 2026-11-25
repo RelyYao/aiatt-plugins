@@ -78,7 +78,13 @@ function simulate(pluginId, { games = 20, maxSteps = 600, seed = 1 } = {}) {
         const seen = host.view(room, viewer);
         if (seen.code) { report.faults.push({ game, step, error: seen.error, during: 'view' }); continue; }
         const text = JSON.stringify(seen.data.view);
-        for (const secret of secrets.data) if (!(viewer && secret.visibleTo.includes(viewer)) && text.includes(JSON.stringify(secret.value))) report.leaks.push({ game, step, viewer, value: secret.value });
+        for (const secret of secrets.data) {
+          if (viewer && secret.visibleTo.includes(viewer)) continue;
+          // With a path: change the value there and see whether this viewer's view changes (catches derived leaks, and a
+          // small number another seat may legitimately also hold is not a false alarm). Without one: search the text.
+          const leaked = secret.path ? changes(host, room, secret, viewer, text) : text.includes(JSON.stringify(secret.value));
+          if (leaked) report.leaks.push({ game, step, viewer, value: secret.value, ...(secret.path ? { path: secret.path } : {}) });
+        }
       }
     }
     if (room.state.plugin.result?.done) report.finished++;
@@ -87,5 +93,22 @@ function simulate(pluginId, { games = 20, maxSteps = 600, seed = 1 } = {}) {
   }
   report.ok = !report.faults.length && !report.stalls.length && !report.leaks.length && !report.replayFailures.length;
   return report;
+}
+// A value that differs from the secret but keeps its type, so a view that only formats it shows something else.
+function probe(value) {
+  if (typeof value === 'number') return value + 7919;
+  if (typeof value === 'string') return value + '\u2063probe';
+  if (typeof value === 'boolean') return !value;
+  return { probe: JSON.stringify(value ?? null) };
+}
+function changes(host, room, secret, viewer, text) {
+  const state = structuredClone(room.state.plugin.state);
+  let node = state;
+  for (const key of secret.path.slice(0, -1)) { if (!node || typeof node !== 'object') return false; node = node[key]; }
+  const last = secret.path.at(-1);
+  if (!node || typeof node !== 'object' || !Object.hasOwn(node, last)) return false;
+  node[last] = probe(node[last]);
+  const seen = host.viewOfState(room, state, viewer);
+  return !seen.code && JSON.stringify(seen.data) !== text;
 }
 module.exports = { simulate, sample };

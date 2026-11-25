@@ -17,7 +17,9 @@ function copyTree(from, to, replace) {
 function scaffold(id, { template = 'match', dir, author = 'Your Name', name } = {}) {
   if (!ID.test(id || '')) throw Object.assign(new Error('the id must be 2–40 lowercase letters, digits or hyphens, starting with a letter'), { code: 'PLUGIN_ID_INVALID' });
   if (!KINDS.includes(template)) throw Object.assign(new Error('--template must be ' + KINDS.join(' or ')), { code: 'PLUGIN_TEMPLATE_UNKNOWN' });
-  const target = path.resolve(dir || id);
+  // At the root of the community repository (or the platform's), plugins live in plugins/<id>: put the new one there.
+  const root = !dir && fs.existsSync(path.resolve('plugins')) && fs.statSync(path.resolve('plugins')).isDirectory();
+  const target = path.resolve(dir || (root ? path.join('plugins', id) : id));
   if (fs.existsSync(target) && fs.readdirSync(target).length) throw Object.assign(new Error(`${target} exists and is not empty`), { code: 'PLUGIN_DIR_EXISTS' });
   fs.mkdirSync(target, { recursive: true });
   copyTree(path.join(TEMPLATES, template), target, { ID: id, NAME: name || titleOf(id), AUTHOR: author });

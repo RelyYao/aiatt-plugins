@@ -51,13 +51,16 @@ function runTest(dir, { games = 30, seed = 1, fuzz: fuzzMatches = 2000, maxSteps
       for (const [name, list] of [['fault', simulation.faults], ['stall', simulation.stalls], ['leak', simulation.leaks], ['replay', simulation.replayFailures]]) for (const item of list.slice(0, 5)) report.problems.push(`simulate: ${name} ${JSON.stringify(item)}`);
     } else stage('simulate', false, 'the simulation could not run');
     if (fuzzMatches > 0) {
-      // Random play can only be asked to finish a match when the plugin has an engine() or its plain simulation finished one.
-      const lenient = !graph.host.hasFunction(checked.id, 'engine') && !(simulation && simulation.finished > 0);
-      const fuzzed = fuzz(graph, checked.id, { matches: fuzzMatches, seed, lenient, ...(steps ? { maxSteps: steps } : {}) });
+      // Random play cannot be asked to finish a game a plugin without engine() never finished in its plain simulation; the
+      // fuzz also finds it when the simulation finished only through a seat leaving, which random play never does. Matches
+      // the engine plays in every seat must finish either way (fuzz.js).
+      const known = !graph.host.hasFunction(checked.id, 'engine') && !(simulation && simulation.finished > 0);
+      const fuzzed = fuzz(graph, checked.id, { matches: fuzzMatches, seed, lenient: known, ...(steps ? { maxSteps: steps } : {}) });
+      const lenient = fuzzed.lenient;
       const open = fuzzed.matches - fuzzed.finished;
       stage('fuzz', fuzzed.ok, `${fuzzed.finished}/${fuzzed.matches} matches finished, ${fuzzed.steps} steps, ${fuzzed.faultCount} faults, ${fuzzed.unfinished.length + fuzzed.stalls.length} unfinished, ${fuzzed.invariantBreaks.length} invariant breaks`, { report: fuzzed });
-      for (const [name, list] of [['fault', fuzzed.faults], ['unfinished', lenient ? [] : fuzzed.unfinished], ['stall', fuzzed.stalls], ['invariant', fuzzed.invariantBreaks], ['replay', fuzzed.replayFailures]]) for (const item of list.slice(0, 5)) report.problems.push(`fuzz: ${name} ${JSON.stringify(item)}`);
-      if (lenient && open > 0) report.warnings.push(`fuzz: ${open} matches did not finish (the plugin has no engine(): random play cannot finish this game)`);
+      for (const [name, list] of [['fault', fuzzed.faults], ['engine match unfinished', fuzzed.engineUnfinished], ['unfinished', lenient ? [] : fuzzed.unfinished], ['stall', fuzzed.stalls], ['invariant', fuzzed.invariantBreaks], ['replay', fuzzed.replayFailures]]) for (const item of list.slice(0, 5)) report.problems.push(`fuzz: ${name} ${JSON.stringify(item)}`);
+      if (lenient && open > 0) report.warnings.push(`fuzz: ${open} random matches did not finish (random play cannot finish this game)${fuzzed.engineMatches ? `; ${fuzzed.engineFinished}/${fuzzed.engineMatches} matches played by the engine in every seat finished` : '; the plugin has no engine() to show the game ends'}`);
     } else stage('fuzz', true, 'skipped (--fuzz 0)', { skipped: true });
     if (fs.existsSync(path.join(dir, 'agent', 'prompts.js'))) {
       let agent;

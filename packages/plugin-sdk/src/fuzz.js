@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: Apache-2.0
 'use strict';
 // Fuzz: thousands of short random matches through the real host. Every match of a `match` plugin must finish (unless
-// `lenient`: a plugin without engine() whose plain simulation finished none, whose play needs specific moves). A step
+// `lenient`: random play cannot finish a game that needs specific moves, like a whole Guandan match. It is given by the
+// caller, or found here: a plugin without engine() whose first 20 random matches all ran out of steps). A plugin with engine() also plays every tenth match with the engine in every seat, and
+// those must finish whatever `lenient` says: that is what shows the game ends. A step
 // the host refuses must change nothing (the host promises it; a plugin that mutates module-level state breaks it), a
 // plugin must never fault (exception, time-out, malformed answer, state over the limit), and nonsense actions
 // (unknown names, wrong types, oversized values) must be refused with a 4xx, never a 5xx. Every tenth match is
@@ -20,13 +22,16 @@ function garbage(rng, manifest) {
 }
 function fuzz(graph, id, { matches = 2000, seed = 1, maxSteps = 800, lenient = false } = {}) {
   const { host, conformance } = graph, manifest = host.manifestFor(id), engine = host.hasFunction(id, 'engine');
-  const report = { plugin: id, matches, finished: 0, steps: 0, refused: {}, faults: [], unfinished: [], stalls: [], invariantBreaks: [], replayFailures: [], faultCount: 0 };
+  const report = { plugin: id, matches, finished: 0, steps: 0, refused: {}, faults: [], unfinished: [], stalls: [], invariantBreaks: [], replayFailures: [], faultCount: 0, engineMatches: 0, engineFinished: 0, engineUnfinished: [] };
   const note = (list, entry) => { if (list.length < SHOW) list.push(entry); };
-  const must = manifest.category === 'match', limit = must ? maxSteps : Math.min(maxSteps, 60);
+  const must = manifest.category === 'match', limit = must ? maxSteps : Math.min(maxSteps, 60), PROBE = 20;
   for (let game = 0; game < matches; game++) {
+    if (!lenient && must && !engine && game === PROBE && matches > PROBE && report.finished === 0 && !report.stalls.length) { lenient = true; report.lenientFound = true; report.unfinished = []; }
     const rng = seeded(seed * 100003 + game), count = Math.max(manifest.seats.min + Math.floor(rng() * (manifest.seats.max - manifest.seats.min + 1)), must ? 1 : 0);
+    const engineGame = engine && must && game % 10 === 5;
+    if (engineGame) report.engineMatches++;
     const bots = new Set(), seats = Array.from({ length: count }, (_, i) => {
-      const bot = engine && count > 1 && i === count - 1 && rng() < 0.25;
+      const bot = engineGame || (engine && count > 1 && i === count - 1 && rng() < 0.25);
       if (bot) bots.add(`seat${i}`);
       return { id: `seat${i}`, kind: bot ? 'bot' : 'human', name: `Seat ${i}`, ...(i === 0 ? { owner: true } : {}) };
     });
@@ -42,7 +47,8 @@ function fuzz(graph, id, { matches = 2000, seed = 1, maxSteps = 800, lenient = f
     };
     const play = () => { if (engine && bots.size) for (const s of host.autoPlay(room, now)) if (s.error) { report.faultCount++; note(report.faults, { game, error: s.error, during: 'engine' }); } };
     play();
-    for (let step = 0; step < limit; step++) {
+    // Under `lenient` a random match only has to stay sound (no fault, no broken invariant), so it stops sooner.
+    for (let step = 0, cap = lenient && !engineGame ? Math.min(limit, 200) : limit; step < cap; step++) {
       const p = room.state.plugin;
       if (p.result?.done) break;
       const open = p.decisions.filter(d => !bots.has(d.actor)), deadlines = p.decisions.map(d => d.deadlineAt).filter(Number.isFinite);
@@ -73,13 +79,14 @@ function fuzz(graph, id, { matches = 2000, seed = 1, maxSteps = 800, lenient = f
       const seen = host.view(room, rng() < 0.2 ? null : pick(rng, ids));
       if (seen.code) { report.faultCount++; note(report.faults, { game, step, error: seen.error, message: seen.message, during: 'view' }); }
     }
-    if (room.state.plugin.result?.done) report.finished++;
+    if (room.state.plugin.result?.done) { report.finished++; if (engineGame) report.engineFinished++; }
+    else if (engineGame) note(report.engineUnfinished, { game, seed: matchSeed, steps: room.state.plugin.step });
     else if (must && !report.stalls.some(s => s.game === game)) note(report.unfinished, { game, seed: matchSeed, steps: room.state.plugin.step });
     if (game % 10 === 0) { const replayed = host.replay(room); if (replayed.code || !replayed.data.ok) note(report.replayFailures, { game, failedAt: replayed.data?.failedAt ?? null, error: replayed.error || null }); }
   }
   // `lenient`: random play cannot finish this game (the plugin has no engine() and its own simulation finished no match), so an unfinished match is a warning, not a failure.
   report.lenient = lenient;
-  report.ok = !report.faultCount && (lenient || !report.unfinished.length) && !report.stalls.length && !report.invariantBreaks.length && !report.replayFailures.length && (lenient || !must || report.finished === matches);
+  report.ok = !report.faultCount && !report.engineUnfinished.length && (lenient || !report.unfinished.length) && !report.stalls.length && !report.invariantBreaks.length && !report.replayFailures.length && (lenient || !must || report.finished === matches);
   return report;
 }
 module.exports = { fuzz };

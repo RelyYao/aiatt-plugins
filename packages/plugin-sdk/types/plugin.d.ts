@@ -30,7 +30,8 @@ declare namespace AiattPlugin {
     timeout?(state: S, decision: Decision, ctx: Context): Action;
     leave?(state: S, seat: string, ctx: Context): Step<S>;
     engine?(state: S, decision: Decision, ctx: Context): Action | null;
-    secrets?(state: S): Array<{ value: Json; visibleTo: string[] }>;
+    /** `path`: keys into the state where the value sits; the leak check then changes it and compares views (precise for small numbers). */
+    secrets?(state: S): Array<{ value: Json; visibleTo: string[]; path?: Array<string | number> }>;
     view(state: S, viewer: string | null, ctx: Context): V;
     result(state: S, ctx: Context): Result;
     migrate?(state: any, fromVersion: string): S;
