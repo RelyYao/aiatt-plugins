@@ -44,6 +44,10 @@ npx aiatt-plugin test            # 提交前必须通过
 4. 自动检查（清单格式、一致性测试、泄露检查、模糊测试、包大小、禁用 API 扫描、依赖白名单）必须全绿，然后进入人工审核，流程见 [REVIEW.md](REVIEW.md)。
 5. 合并后由维护者同步进平台主干，随下一次平台发布上线；上线前平台可能先灰度给少数房间或用户。
 
+### 平台缺能力时
+
+写插件时发现平台缺一项能力或接口（新能力、宿主接口、限额、默认界面、Agent 驱动、结算），用「平台需求」模板开 issue，**附一个最小的复现插件**。维护者按批评审，结论是接、以后再说、在插件里解决（会给出写法）或不接，标准见 [REVIEW.md](REVIEW.md) 第 6 节。接下的需求随平台发布上线，上线后请用你的复现验证一遍。
+
 ### 授权
 
 提交即表示这段代码是你写的（或你有权提交），并同意按 Apache License 2.0 授权给本项目和使用者（许可证第 5 条）。
@@ -99,6 +103,10 @@ npx aiatt-plugin test            # must pass before you submit
 3. Tick the template's checklist; say what the game is, the seat count, the capabilities it asks for, and what you tried in a debug room or the simulator.
 4. The automatic checks (manifest format, conformance tests, leak check, fuzzing, bundle size, forbidden API scan, dependency allowlist) must be green, then a human review follows; see [REVIEW.md](REVIEW.md).
 5. After the merge a maintainer syncs it into the platform trunk and it ships with the next platform release; the platform may roll it out to a few rooms or users first.
+
+### When the platform lacks something
+
+If your plugin needs a capability or interface the platform does not offer (a new capability, host interface, limits, default UI, Agent driving, settlement), open an issue with the "Platform request" template and **attach a minimal reproduction plugin**. Maintainers review requests in batches; the outcome is accept, later, solve it in the plugin (with how) or decline, by the criteria in section 6 of [REVIEW.md](REVIEW.md). Accepted requests ship with a platform release; please check them with your reproduction once they are live.
 
 ### Licensing
 

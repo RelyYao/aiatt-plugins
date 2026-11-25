@@ -1,0 +1,60 @@
+name: 平台需求 / Platform request
+description: 写插件时发现平台缺一项能力或接口 / Your plugin needs something the platform does not offer yet
+labels: ["type: platform-request", "needs: platform-review"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        先查一下[接口文档](../blob/main/docs/房间插件接口-room-plugin-v1.md)和已有的 issue：很多需求用现有能力或 `plugins/kit/` 就能做到。安全问题请不要在这里提，按 [SECURITY.md](../blob/main/SECURITY.md) 私下报告。
+        Check the [interface](../blob/main/docs/房间插件接口-room-plugin-v1.md) and existing issues first: much can already be done with the current capabilities or `plugins/kit/`. Never file a security problem here; follow [SECURITY.md](../blob/main/SECURITY.md).
+  - type: input
+    id: plugin
+    attributes:
+      label: 插件 / Plugin
+      placeholder: my-game@0.2.0
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: 类别 / Kind
+      options:
+        - 新能力 / New capability
+        - 宿主接口（ctx、生命周期、房主动作）/ Host interface (ctx, lifecycle, host actions)
+        - 限额（调用时长、状态大小）/ Limits (call time, state size)
+        - 默认界面和前端组件 / Default UI and client components
+        - Agent 驱动（决策点、提示）/ Agent driving (decisions, prompts)
+        - 结算和计费 / Settlement and pricing
+        - 缺陷 / Bug
+    validations:
+      required: true
+  - type: textarea
+    id: goal
+    attributes:
+      label: 想做什么 / What players should get
+      description: 玩家看到的效果，一两句话 / The effect players see, in a sentence or two
+    validations:
+      required: true
+  - type: textarea
+    id: blocked
+    attributes:
+      label: 卡在哪 / What stops you
+      description: 现有接口为什么做不到，试过哪些写法 / Why the current interface cannot do it and what you tried
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: 复现 / Reproduction
+      description: 一个最小插件（SDK 骨架改出来的）和步骤，在 `npx aiatt-plugin dev` 或 `test` 里能看到做不到或报错。平台交付后，同一个复现就是验收 / A minimal plugin (from the SDK scaffold) and the steps that show the gap in `npx aiatt-plugin dev` or `test`. Once the platform ships, the same reproduction is the acceptance check
+    validations:
+      required: true
+  - type: textarea
+    id: api
+    attributes:
+      label: 建议的接口（可选）/ Suggested interface (optional)
+  - type: textarea
+    id: reach
+    attributes:
+      label: 还有谁用得上 / Who else benefits
+      description: 其他插件或玩法 / Other plugins or kinds of games

@@ -1,0 +1,117 @@
+{
+  "id": "guandan",
+  "version": "1.0.0",
+  "api": "room-plugin@1",
+  "category": "match",
+  "name": {
+    "zh-CN": "掼蛋搭档",
+    "en": "Guandan Partners"
+  },
+  "icon": "🃏",
+  "author": "AiATT",
+  "license": "Apache-2.0",
+  "seats": {
+    "min": 4,
+    "max": 4,
+    "teams": "teams",
+    "people": {
+      "min": 4,
+      "max": 4
+    }
+  },
+  "capabilities": [
+    "rng",
+    "turns",
+    "deadlines",
+    "teams",
+    "hidden",
+    "spectators",
+    "aiSeats",
+    "scoring"
+  ],
+  "ai": {
+    "mode": "engine",
+    "price": 0
+  },
+  "listing": {
+    "tier": "featured",
+    "order": 4,
+    "description": {
+      "en": "4-player 2v2 Guandan with your paired agent as partner. The platform lists legal plays; first team past Ace wins.",
+      "zh-CN": "4 人 2v2 掼蛋：你的对家就是你的配对 Agent 搭档（南北 vs 东西），平台枚举合法牌型、AI 只选不拼错牌；级牌逢人配、炸弹压制、双下升 3 级，打过 A 通关，闪电赛制 15 分钟内必分胜负"
+    }
+  },
+  "client": {
+    "tone": "jade",
+    "icon": "users",
+    "label": "Guandan Partners",
+    "mobile": "./game-packs/guandan/mobile.mjs",
+    "desktop": "./game-guandan.js",
+    "mobileStyles": [
+      "./game-packs/guandan/mobile.css"
+    ],
+    "desktopStyles": [
+      "./style-game-guandan.css"
+    ],
+    "desktopDependencies": []
+  },
+  "timing": {
+    "turnSeconds": 45
+  },
+  "config": {
+    "type": "object",
+    "properties": {
+      "actMs": {
+        "type": "integer",
+        "minimum": 1000,
+        "maximum": 600000,
+        "default": 45000
+      },
+      "nextDealMs": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 600000,
+        "default": 4000
+      },
+      "handCap": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 50,
+        "default": 8
+      },
+      "levelGap": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 13,
+        "default": 6
+      }
+    },
+    "additionalProperties": false
+  },
+  "actions": {
+    "play": {
+      "type": "object",
+      "properties": {
+        "combo": {
+          "type": "string",
+          "maxLength": 200
+        }
+      },
+      "additionalProperties": false
+    },
+    "pass": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false
+    },
+    "deal": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false
+    }
+  },
+  "limits": {
+    "callMs": 500,
+    "stateBytes": 262144
+  }
+}

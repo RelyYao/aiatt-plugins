@@ -135,7 +135,8 @@ function start(room, pluginId, { seats = [], config = {}, now = Date.now(), seed
   room.state ||= {}; room.state.plugin = p; store.save();
   return { data: { match: p.match, step: 0, decisions: p.decisions } };
 }
-// One step: `input` is { type, ...fields }. `system` marks the host's own timeout moves. `host` is the platform
+// One step: `input` is { type, ...fields }. `system` marks the host's own moves (a timeout, an engine seat); the plugin
+// sees ctx.system (to mark a move as made for the seat). `host` is the platform
 // vouching that the actor is the room's host (who that is — the owner, anyone at a quick-match table — is the
 // platform's rule): an action the manifest lists in hostActions is then taken whether or not the actor has a seat or
 // an open decision, and the plugin sees ctx.host.
@@ -151,7 +152,7 @@ function act(room, actorId, input, { now = Date.now(), system = false, host = fa
   if (problems.length) return fail(400, 'PLUGIN_ACTION_INVALID', 'The action does not match its description', { problems });
   if (!asHost && m.capabilities.includes('turns') && !p.decisions.some(d => d.actor === actorId && d.actions.includes(type))) return fail(409, 'NOT_YOUR_TURN', 'It is not your turn for that');
   const step = p.step + 1, action = { type, ...fields };
-  const applied = run(entry, 'apply', [p.state, action], context(entry, p, { now, actor: actorId, seed: seedFor(p, step), ...(asHost ? { host: true } : {}) }));
+  const applied = run(entry, 'apply', [p.state, action], context(entry, p, { now, actor: actorId, seed: seedFor(p, step), ...(asHost ? { host: true } : {}), ...(system ? { system: true } : {}) }));
   if (applied.error) return applied.error;
   return commit(room, p, entry, applied.value, { step, now, actor: actorId, action, extra: { ...(system ? { system: true } : {}), ...(asHost ? { host: true } : {}) } });
 }
@@ -169,7 +170,27 @@ function leave(room, seatId, { now = Date.now() } = {}) {
   if (applied.error) return applied.error;
   return commit(room, p, entry, applied.value, { step, now, actor: null, action, extra: {} });
 }
-// The checks and the commit shared by act() and leave(): `out` is what the plugin returned.
+// A seat joins a match under way (a person sitting in at a standing table): the plugin's join(state, seat, ctx) says
+// whether and how (say, between two hands). The seat is added to the match's seats; logged as a $join step.
+function join(room, seat, { now = Date.now() } = {}) {
+  const p = room?.state?.plugin, entry = entryOf(p);
+  if (!p) return fail(404, 'PLUGIN_NOT_RUNNING', 'This room has no plugin');
+  if (!entry) return fail(503, 'PLUGIN_VERSION_UNAVAILABLE', 'This plugin version is not loaded');
+  if (p.result?.done) return fail(409, 'PLUGIN_FINISHED', 'This match is over');
+  if (!entry.has('join')) return fail(409, 'PLUGIN_NO_JOIN', 'This plugin does not take seats during a match');
+  const seated = seatsFor({ seats: { min: 1, max: entry.manifest.seats.max } }, [...p.seats, seat]);
+  if (seated.code) return seated;
+  const added = seated.data.at(-1), step = p.step + 1, action = { type: '$join', seat: added };
+  const applied = run(entry, 'join', [p.state, added], context(entry, { ...p, seats: seated.data }, { now, seed: seedFor(p, step) }));
+  if (applied.error) return applied.error;
+  if (applied.value && typeof applied.value.error === 'string') return fail(409, applied.value.error.slice(0, 64), typeof applied.value.message === 'string' ? applied.value.message.slice(0, 200) : applied.value.error.slice(0, 64));
+  const seats = p.seats;
+  p.seats = seated.data;
+  const done = commit(room, p, entry, applied.value, { step, now, actor: null, action, extra: {} });
+  if (done.code) p.seats = seats;
+  return done;
+}
+// The checks and the commit shared by act(), leave() and join(): `out` is what the plugin returned.
 function commit(room, p, entry, out, { step, now, actor, action, extra }) {
   const m = entry.manifest;
   // A refusal is 409 (not allowed now); a plugin may say 400 (the input is malformed) or 403 (not this seat's to do).
@@ -310,7 +331,9 @@ function replay(room) {
   const archived = [];
   for (let before = null, page; (page = store.archived({ ledger: 'pluginActions', room: room.id, before, limit: 1000 })).length; before = [page.at(-1).at, page.at(-1).id]) archived.push(...page.filter(r => r.value.match === p.match).map(r => r.value));
   const log = [...archived, ...p.log].sort((a, b) => a.step - b.step);
-  const copy = { ...p, state: null, decisions: [], log: [] };
+  // Seats that joined during the match were not at the table when it started: they come back in with their $join.
+  const joined = new Set(log.filter(row => row.action?.type === '$join').map(row => row.action.seat.id));
+  const copy = { ...p, seats: p.seats.filter(s => !joined.has(s.id)), state: null, decisions: [], log: [] };
   // An adopted match starts from the state it was taken over in; platform entries change no state ($conclude) or
   // are the plugin's own answer to them ($leave).
   const setup = p.adopted ? { value: structuredClone(p.origin) } : entry.has('setup') ? run(entry, 'setup', [], context(entry, copy, { now: p.startedAt, seed: seedFor(p, 0) })) : { value: {} };
@@ -318,9 +341,11 @@ function replay(room) {
   let state = setup.value;
   for (const row of log) {
     const type = String(row.action?.type);
-    if (row.step === 0 || (type.startsWith('$') && type !== '$leave')) continue;
+    if (row.step === 0 || (type.startsWith('$') && type !== '$leave' && type !== '$join')) continue;
+    if (type === '$join') copy.seats = [...copy.seats, row.action.seat];
     const out = type === '$leave' ? run(entry, 'leave', [state, row.action.seat], context(entry, copy, { now: row.at, seed: seedFor(p, row.step) }))
-      : run(entry, 'apply', [state, row.action], context(entry, copy, { now: row.at, actor: row.actor, seed: seedFor(p, row.step), ...(row.host ? { host: true } : {}) }));
+      : type === '$join' ? run(entry, 'join', [state, row.action.seat], context(entry, copy, { now: row.at, seed: seedFor(p, row.step) }))
+      : run(entry, 'apply', [state, row.action], context(entry, copy, { now: row.at, actor: row.actor, seed: seedFor(p, row.step), ...(row.host ? { host: true } : {}), ...(row.system ? { system: true } : {}) }));
     if (out.error || !out.value || Object.hasOwn(out.value, 'error')) return { data: { ok: false, failedAt: row.step } };
     state = out.value.state;
   }
@@ -328,4 +353,4 @@ function replay(room) {
   return { data: { ok: same, steps: log.length - 1, failedAt: same ? null : p.step } };
 }
 function onResult(listener) { resultListeners.add(listener); return () => resultListeners.delete(listener); }
-module.exports = { register, loadDirectory, ensureBundled, unregister, hasFunction, catalog, manifestFor, has, start, adopt, act, leave, conclude, expire, autoPlay, resync, view, secrets, replay, onResult, LOG_KEEP };
+module.exports = { register, loadDirectory, ensureBundled, unregister, hasFunction, catalog, manifestFor, has, start, adopt, act, leave, join, conclude, expire, autoPlay, resync, view, secrets, replay, onResult, LOG_KEEP };

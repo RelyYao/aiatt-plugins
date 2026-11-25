@@ -10,11 +10,13 @@ const { runTest } = require('./run-tests');
 const { build } = require('./build');
 const { kb } = require('./util');
 const SOURCE_ENTRIES = ['plugin.json', 'server', 'locales', 'agent', 'client', 'assets', 'README.md', 'LICENSE'];
-const REPO = '<community-repo-url>';
+const REPO = 'https://github.com/RelyYao/aiatt-plugins';
+const UPSTREAM = 'RelyYao/aiatt-plugins';
 function commands(dir, { id, version }, repo, submission) {
   const here = path.resolve(dir), branch = `plugin/${id}-${version}`;
   return [
-    `git clone ${repo} aiatt-plugins && cd aiatt-plugins`,
+    // The community repository itself is not writable for authors: fork it with gh (clone + remote) unless --repo names a fork.
+    repo === REPO ? `gh repo fork ${UPSTREAM} --clone && cd aiatt-plugins` : `git clone ${repo} aiatt-plugins && cd aiatt-plugins`,
     `git checkout -b ${branch}`,
     `mkdir -p plugins/${id}`,
     ...SOURCE_ENTRIES.filter(name => fs.existsSync(path.join(here, name))).map(name => `cp -R ${JSON.stringify(path.join(here, name))} plugins/${id}/`),
@@ -52,7 +54,7 @@ ${report.warnings.length ? `\n提醒：\n${report.warnings.map(w => `- ${w}`).jo
 
 ## 提交步骤
 
-先在 GitHub 上 fork 社区仓库，把下面的 \`${REPO}\` 换成你 fork 的地址。命令不会自动执行，逐条运行：
+社区仓库：${REPO}。第一条命令用 \`gh\` 把它 fork 到你的账号并克隆下来（已经有 fork 的话，用 \`--repo <你的 fork 地址>\` 重新生成）。命令不会自动执行，逐条运行：
 
 \`\`\`bash
 ${steps.join('\n')}
@@ -76,4 +78,4 @@ function submit(dir, { games, seed, fuzz, repo = REPO, graph = loadHost() } = {}
   fs.writeFileSync(path.join(submission, 'SUBMISSION.md'), document(tested, built, steps, repo));
   return { ok: true, test: tested, dir: submission, files: fs.readdirSync(submission).sort(), commands: steps };
 }
-module.exports = { submit, REPO };
+module.exports = { submit, REPO, UPSTREAM };

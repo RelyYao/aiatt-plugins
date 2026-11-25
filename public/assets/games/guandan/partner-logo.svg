@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="160" viewBox="0 0 240 160" role="img" aria-labelledby="partner-title partner-desc">
+  <title id="partner-title">掼蛋搭档握手标志</title>
+  <desc id="partner-desc">蓝色与红色的两只手紧紧相握，两侧袖口各有圆形扣点，下方金色弧线托起握手，象征搭档协作与默契。</desc>
+  <defs>
+    <linearGradient id="blue-hand" x1="48" y1="46" x2="151" y2="112" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7296ce"/>
+      <stop offset="1" stop-color="#4f78bd"/>
+    </linearGradient>
+    <linearGradient id="red-hand" x1="117" y1="44" x2="187" y2="98" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#d98272"/>
+      <stop offset="1" stop-color="#c25a50"/>
+    </linearGradient>
+    <linearGradient id="gold-cradle" x1="120" y1="113" x2="120" y2="145" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#f4d58b"/>
+      <stop offset="1" stop-color="#d9a940"/>
+    </linearGradient>
+  </defs>
+  <g stroke="#172338" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <!-- The left hand forms the lower half of the clasp. -->
+    <path fill="url(#blue-hand)" d="M55 60 77 47Q84 43 91 48L111 60 132 58 163 82Q170 88 164 94 161 98 156 95 160 102 153 106 149 109 144 105 146 112 139 113 134 113 129 108 126 115 119 110L91 91 74 84 64 88Z"/>
+    <!-- The right hand reaches across, with a clearly outlined bent thumb. -->
+    <path fill="url(#red-hand)" d="m185 60-22-15q-7-5-15-1l-22 12-18-2q-6-1-10 4L86 72q-5 6 1 11 5 4 10-1l11-10 13 1 29 23q5 4 10 0l13-13 11 4Z"/>
+    <path fill="none" d="m121 73 29 23M112 88l24 18M103 95l22 15"/>
+    <path fill="#4f78bd" d="m25 61 24-13 24 37-22 16Z"/>
+    <path fill="#c25a50" d="m191 48 24 13-26 40-22-16Z"/>
+    <circle cx="46" cy="79" r="4" fill="#e8effa"/>
+    <circle cx="194" cy="79" r="4" fill="#f9e5df"/>
+    <path fill="url(#gold-cradle)" stroke="#2a1d05" d="M34 114c44 27 128 27 172 0l-10 16c-42 23-110 23-152 0Z"/>
+  </g>
+</svg>

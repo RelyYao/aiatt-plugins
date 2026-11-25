@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600" role="img" aria-labelledby="felt-title felt-desc">
+  <title id="felt-title">蓝紫色椭圆毛毡牌桌</title>
+  <desc id="felt-desc">深蓝紫色径向渐变的椭圆毛毡桌布，细密织物纹理覆盖桌面，中央有低透明度金色细内环，四角点缀极淡的梅花花色水印。</desc>
+  <defs>
+    <radialGradient id="felt-surface" cx="48%" cy="42%" r="66%">
+      <stop offset="0" stop-color="#1a2740"/>
+      <stop offset="1" stop-color="#0d1526"/>
+    </radialGradient>
+    <filter id="felt-weave" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.62 0.92" numOctaves="3" seed="17" stitchTiles="stitch" result="fibres"/>
+      <feColorMatrix in="fibres" type="saturate" values="0" result="grey-fibres"/>
+      <feComponentTransfer in="grey-fibres">
+        <feFuncA type="linear" slope="0.085"/>
+      </feComponentTransfer>
+    </filter>
+    <clipPath id="felt-outline">
+      <ellipse cx="400" cy="300" rx="386" ry="282"/>
+    </clipPath>
+    <g id="felt-club">
+      <path d="M0 -27C-14 -27 -21 -10 -12 0C-30 -6 -39 11 -30 23C-23 33 -8 30 -3 20L-8 37H8L3 20C8 30 23 33 30 23C39 11 30 -6 12 0C21 -10 14 -27 0 -27Z"/>
+    </g>
+  </defs>
+  <ellipse cx="400" cy="300" rx="386" ry="282" fill="url(#felt-surface)"/>
+  <g clip-path="url(#felt-outline)">
+    <rect x="14" y="18" width="772" height="564" filter="url(#felt-weave)"/>
+    <g fill="#d9a940" fill-opacity="0.035" stroke="#d9a940" stroke-opacity="0.025" stroke-width="1.5" stroke-linejoin="round">
+      <use href="#felt-club" transform="translate(170 140) rotate(-24) scale(0.8)"/>
+      <use href="#felt-club" transform="translate(630 140) rotate(24) scale(0.8)"/>
+      <use href="#felt-club" transform="translate(170 460) rotate(-156) scale(0.8)"/>
+      <use href="#felt-club" transform="translate(630 460) rotate(156) scale(0.8)"/>
+    </g>
+  </g>
+  <ellipse cx="400" cy="300" rx="386" ry="282" fill="none" stroke="#0d1526" stroke-width="3"/>
+  <ellipse cx="400" cy="300" rx="348" ry="244" fill="none" stroke="#d9a940" stroke-width="1.5" opacity="0.12"/>
+</svg>

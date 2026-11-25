@@ -93,6 +93,20 @@
 
 审核人原则：对事不对人；给出能照着改的意见；第一期不承诺固定的审核时长；有安全疑虑时宁可拒绝并说明原因。
 
+### 6. 平台需求怎么评审
+
+「平台需求」issue（标签 `type: platform-request`）由平台维护者按批评审（大约每周一次）。每条按七项看，评审结论写在 issue 里：
+
+1. **通用性**：至少两个插件或一整类玩法用得上，不为单个插件开特例。
+2. **符合插件原则**：插件仍是纯逻辑，副作用由平台管；平台代码里不出现插件名字；能力默认拒绝。
+3. **安全**：不泄露别人的隐藏信息，不绕过沙箱，不能刷积分，前端拿不到登录态。
+4. **性能和存储**：每个动作多出来的计算、调用和写入在预算内。
+5. **兼容**：对 `room-plugin@1` 只做增量；破坏性变更要出新的大版本，旧插件继续跑。
+6. **代价和排期**：工作量，以及和平台路线图冲不冲突。
+7. **替代方案**：能在插件里或 `plugins/kit/` 里解决的，优先这样做。
+
+结论四种，各有标签：`status: planned`（接，排进开发）、`status: deferred`（以后再说，写明什么情况下再看）、`status: solved-in-plugin`（给出写法）、`status: rejected`（写明违反了哪一条）。接下的需求合并后是 `status: merged-pending-sync`，随平台发布上线后是 `status: released`；提需求的人用自己的复现验证后关闭。
+
 ---
 
 ## English
@@ -187,3 +201,17 @@ Labels are set by a bot or a maintainer; a pull request carries exactly one `sta
 Helper labels: `type: new-plugin`, `type: plugin-fix`, `type: docs`, `type: tooling`; `needs: debug-room` (the reviewer needs a debug room); `needs: art-license` (asset license to be confirmed); `security` (security related, move to private handling, see [SECURITY.md](SECURITY.md)).
 
 Reviewer principles: criticize the work, not the person; give comments the author can act on; no fixed turnaround is promised in the first phase; when in doubt about security, reject and explain.
+
+### 6. Platform requests
+
+"Platform request" issues (label `type: platform-request`) are reviewed by the platform maintainers in batches (about weekly), on seven points, with the verdict written in the issue:
+
+1. **Reach**: at least two plugins or a whole kind of game benefit; no special case for one plugin.
+2. **Plugin principles**: plugins stay pure logic and the platform owns side effects; no plugin names in platform code; capabilities are denied by default.
+3. **Security**: no leak of others' hidden information, no way around the sandbox, no point farming, no session access from the client.
+4. **Performance and storage**: the extra work, calls and writes per action fit the budget.
+5. **Compatibility**: additive to `room-plugin@1`; a breaking change needs a new major version and old plugins keep running.
+6. **Cost and timing**: the effort, and whether it collides with the platform roadmap.
+7. **Alternatives**: what can be done inside the plugin or `plugins/kit/` is done there.
+
+Four outcomes, each with a label: `status: planned` (accepted and scheduled), `status: deferred` (later, with the condition to look again), `status: solved-in-plugin` (with how), `status: rejected` (with the rule it breaks). An accepted request becomes `status: merged-pending-sync` when merged and `status: released` when live; the requester checks it with their reproduction and closes it.

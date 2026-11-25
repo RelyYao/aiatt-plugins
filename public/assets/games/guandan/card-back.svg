@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="356" viewBox="0 0 256 356" role="img" aria-labelledby="card-back-title card-back-desc">
+  <title id="card-back-title">朱红金纹掼蛋牌背</title>
+  <desc id="card-back-desc">圆角朱红渐变牌背上铺有低透明度白色菱形格纹，金色与白色双线内框围绕中央金线圆形徽章，徽章中以金色衬线粗体书写掼字。</desc>
+  <defs>
+    <linearGradient id="card-back-red" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#8e3038"/>
+      <stop offset="1" stop-color="#6b1f28"/>
+    </linearGradient>
+    <pattern id="card-back-lattice" width="24" height="32" patternUnits="userSpaceOnUse">
+      <path d="M12 0L24 16L12 32L0 16Z" fill="none" stroke="#ffffff" stroke-width="1" stroke-opacity="0.11" stroke-linejoin="round"/>
+    </pattern>
+    <clipPath id="card-back-outline">
+      <rect x="5" y="5" width="246" height="346" rx="20"/>
+    </clipPath>
+  </defs>
+  <g stroke-linecap="round" stroke-linejoin="round">
+    <rect x="5" y="5" width="246" height="346" rx="20" fill="url(#card-back-red)" stroke="#351a24" stroke-width="3"/>
+    <rect x="5" y="5" width="246" height="346" fill="url(#card-back-lattice)" clip-path="url(#card-back-outline)"/>
+    <rect x="16" y="16" width="224" height="324" rx="14" fill="none" stroke="#d9a940" stroke-width="1.8"/>
+    <rect x="23" y="23" width="210" height="310" rx="10" fill="none" stroke="#ffffff" stroke-width="1" stroke-opacity="0.55"/>
+    <g fill="none" stroke="#d9a940" stroke-width="1.5">
+      <path d="M40 65V41H64M192 41H216V65M40 291V315H64M192 315H216V291"/>
+      <path d="M128 66L134 76L128 86L122 76ZM128 270L134 280L128 290L122 280Z"/>
+      <path d="M128 95V108M128 248V261" stroke-opacity="0.6"/>
+    </g>
+    <circle cx="128" cy="178" r="63" fill="#6b1f28" stroke="#d9a940" stroke-width="1"/>
+    <circle cx="128" cy="178" r="56" fill="url(#card-back-red)" stroke="#d9a940" stroke-width="2"/>
+    <g fill="#d9a940">
+      <path d="M128 111L131 115L128 119L125 115ZM128 237L131 241L128 245L125 241ZM61 178L65 175L69 178L65 181ZM187 178L191 175L195 178L191 181Z"/>
+    </g>
+    <text x="128" y="180" text-anchor="middle" dominant-baseline="middle" font-family="serif" font-size="56" font-weight="700" fill="#d9a940">掼</text>
+  </g>
+</svg>

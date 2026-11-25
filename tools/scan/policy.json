@@ -1,8 +1,6 @@
 {
   "allowEmails": [
-    "^noreply@",
-    "^security@aiatt\\.cn$",
-    "^conduct@aiatt\\.cn$"
+    "^noreply@"
   ],
   "allowBinary": [
     {

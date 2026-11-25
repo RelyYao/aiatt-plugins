@@ -65,6 +65,7 @@ module.exports = definePlugin({
 - 座位：`{ id, kind: human | agent | bot, name, team?, owner?, engine? }`。`kind: bot` 或 `engine: true` 的座位由平台引擎走（`engine()`）。`owner` 只是标记，房主权限用 `hostActions`。
 - **房主动作**：平台用 `act(room, 谁, 动作, { host: true })` 担保这个人是房主；动作在 `hostActions` 里时，宿主不查座位和决策点，插件在 `ctx.host` 里看到 `true`，自己决定房主能做什么（卧底：投票截止前只有房主能开票）。
 - **离开**：`leave(room, 座位)` 调插件的 `leave()`，记成一条 `$leave` 日志，重放时同样走 `leave()`。没有 `leave()` 的插件由平台决定（`conclude`）。
+- **中途入座**：`join(room, 座位)` 调插件可选的 `join(state, seat, ctx)`（例如常驻牌桌在两手之间让人坐进来），座位加入本局，记成 `$join` 日志；重放从开局时的座位开始，到 `$join` 再加入。
 
 ## 4. 宿主做了什么（一次动作）
 
@@ -74,7 +75,7 @@ module.exports = definePlugin({
 4. 重新算 `decisions` 和 `result`；全部通过才写回房间，记一条动作日志。
 5. `result.done`：记下排名，清空决策点，提交成功后通知结果监听者（P1 起接结算：积分、战绩、高光由平台按排名结算，插件不能直接加减分）。
 
-**截止时间**：宿主的 `expire(room, now)` 把过期的决策点变成插件 `timeout()` 给的那一步（标记为系统代走）；插件没给出合法动作时，这个决策点停止计时，不会卡住整个房间的其它部分。
+**截止时间**：宿主的 `expire(room, now)` 把过期的决策点变成插件 `timeout()` 给的那一步（标记为系统代走，插件在 `ctx.system` 里看到 `true`，可以据此把这一步标成「托管」；重放时同样传入）；插件没给出合法动作时，这个决策点停止计时，不会卡住整个房间的其它部分。
 
 **视图**：`view(room, 谁)` 只返回 `plugin.view(state, 这个人)`，加上公开的决策点（别人的可选动作不显示）和结果。原始状态不出服务器。
 
