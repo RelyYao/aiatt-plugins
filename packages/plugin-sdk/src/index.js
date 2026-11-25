@@ -14,4 +14,4 @@ const { previewPrompts } = require('./prompts');
 const { replayLog, readLog } = require('./replay');
 const { submit } = require('./submit');
 const { run } = require('./cli');
-module.exports = { loadHost, locate, check, loadPlugin, test: runTest, fuzz, scanSource, build, scaffold, createSimulator, Session, previewPrompts, replayLog, readLog, submit, run };
+module.exports = { loadHost, locate, check, loadPlugin, test: runTest, fuzz, scanSource, build, scaffold, createSimulator, Session, previewPrompts, replayLog, readLog, submit, request: require('./request').request, run };

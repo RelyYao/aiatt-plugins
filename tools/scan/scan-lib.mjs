@@ -5,6 +5,7 @@
 // come from an optional internal-markers.json next to this file; the platform's copy has it, the public copy does not.
 import fs from 'node:fs';
 import path from 'node:path';
+import { spawnSync } from 'node:child_process';
 
 export const SPDX = 'SPDX-License-Identifier: Apache-2.0';
 export const MAX_BYTES = 1024 * 1024;
@@ -101,6 +102,17 @@ export function scanText(text, { markers = null, allowEmails = [] } = {}) {
   return findings.filter(f => { const key = f.cls + '\0' + f.line + '\0' + f.text; if (seen.has(key)) return false; seen.add(key); return true; });
 }
 
+// In a git working tree, what is in the repository is what git tracks: an installed node_modules (gitignored) is not
+// part of it, while a node_modules someone committed is, and is still caught. Symbolic links are git's mode 120000.
+// Returns null when dir is not the top of a git working tree (an export before its first commit is walked instead).
+function tracked(dir) {
+  if (!fs.existsSync(path.join(dir, '.git'))) return null;
+  const r = spawnSync('git', ['-C', dir, 'ls-files', '-s', '-z'], { encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 });
+  if (r.status !== 0) return null;
+  const files = [], links = [];
+  for (const row of r.stdout.split('\0').filter(Boolean)) { const tab = row.indexOf('\t'), mode = row.slice(0, 6), file = row.slice(tab + 1); (mode === '120000' ? links : files).push(file); }
+  return { files: files.filter(f => fs.existsSync(path.join(dir, f))), links };
+}
 function walk(dir, rel, out, symlinks) {
   for (const entry of fs.readdirSync(path.join(dir, rel), { withFileTypes: true }).sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0)) {
     const next = rel ? rel + '/' + entry.name : entry.name;
@@ -117,7 +129,10 @@ export function scanDirectory(dir, { markers = null, allow = [], allowEmails = [
   const findings = [], allowed = [], list = [], symlinks = [];
   const rules = allow.map(rule => ({ cls: rule.class, file: globToRegExp(rule.file), match: rule.match || null }));
   const binaryRules = allowBinary.map(rule => ({ file: globToRegExp(rule.file), extensions: new Set((rule.extensions || []).map(e => e.toLowerCase())) }));
-  if (files) { for (const f of files) if (fs.existsSync(path.join(dir, f)) && fs.lstatSync(path.join(dir, f)).isFile()) list.push(f.split(path.sep).join('/')); } else walk(dir, '', list, symlinks);
+  const inGit = files ? null : tracked(dir);
+  if (files) { for (const f of files) if (fs.existsSync(path.join(dir, f)) && fs.lstatSync(path.join(dir, f)).isFile()) list.push(f.split(path.sep).join('/')); }
+  else if (inGit) { list.push(...inGit.files); symlinks.push(...inGit.links); }
+  else walk(dir, '', list, symlinks);
   const add = (cls, file, line, text, message) => {
     const rule = rules.find(r => r.cls === cls && r.file.test(file) && (!r.match || text.includes(r.match)));
     (rule ? allowed : findings).push({ class: cls, file, line, text, message });

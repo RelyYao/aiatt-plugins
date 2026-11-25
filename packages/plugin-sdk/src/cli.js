@@ -13,6 +13,7 @@ const { createSimulator } = require('./simulator');
 const { previewPrompts } = require('./prompts');
 const { replayLog, readLog, pluginDirFor } = require('./replay');
 const { submit } = require('./submit');
+const { request } = require('./request');
 const { kb, errorText } = require('./util');
 const VERSION = require('../package.json').version;
 const BOOLEAN = new Set(['json', 'help', 'inspect', 'live', 'all', 'no-watch', 'version']);
@@ -26,6 +27,7 @@ const USAGE = `aiatt-plugin ${VERSION} - developer tools for AiATT room plugins 
   preview-prompts [dir] [--limit 12] [--locale zh-CN] [--json] what an Agent is asked at each decision point
   replay <log.json> [--dir d] [--break-at N] [--inspect]       replay an exported action log
   submit [dir] [--repo url]                                    test + build + dist/submission/ (pushes nothing)
+  request [dir] [--title t] [--kind 0-6]                       dist/request/REQUEST.md: a platform request to complete (sends nothing)
   live [dir]                                                   debug room (coming next)
 
 dir defaults to the current directory.`;
@@ -118,6 +120,11 @@ const handlers = {
     if (!out.ok) { if (out.test) printTest(out.test, io); for (const problem of out.problems || []) io.err('  - ' + problem); io.err('\nnothing was written: fix the problems first'); return 1; }
     io.out(`submission written to ${out.dir}\n  ${out.files.join('\n  ')}\n\nnothing was pushed. To open the pull request run, one by one:\n`);
     for (const line of out.commands) io.out('  ' + line);
+    return 0;
+  },
+  async request({ positional, options, io }) {
+    const out = request(positional[0] || '.', { title: options.title || '', kind: options.kind ? integer(options.kind, 0, 'kind') : 0 });
+    io.out(`request written to ${out.file} (${out.plugin})\n\nfill in the empty sections, then post it as a task in 插件工坊 or as a "平台需求" issue on the community repository. Nothing was sent.`);
     return 0;
   },
   async live({ io }) { io.out('debug room: coming next (P4b)'); return 0; },
