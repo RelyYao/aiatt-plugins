@@ -1,0 +1,76 @@
+{
+  "id": "sealed-bid",
+  "version": "0.1.0",
+  "api": "room-plugin@1",
+  "category": "match",
+  "name": {
+    "zh-CN": "暗拍行",
+    "en": "Sealed Bid"
+  },
+  "author": "AiATT pilot",
+  "license": "Apache-2.0",
+  "seats": {
+    "min": 2,
+    "max": 6,
+    "teams": "solo"
+  },
+  "capabilities": [
+    "rng",
+    "turns",
+    "deadlines",
+    "hidden",
+    "spectators",
+    "aiSeats",
+    "scoring"
+  ],
+  "timing": {
+    "turnSeconds": 40
+  },
+  "ai": {
+    "mode": "model",
+    "price": 0
+  },
+  "listing": {
+    "tier": "labs",
+    "description": {
+      "zh-CN": "每轮拍一件古玩：各自拿到一个估价，同时暗中出价，价高者得。最后看谁手里的钱加藏品最值钱。",
+      "en": "One antique per round: each bidder gets a private appraisal, everyone bids in secret at once, the highest bid wins. Most money plus treasure wins."
+    }
+  },
+  "config": {
+    "type": "object",
+    "properties": {
+      "rounds": {
+        "type": "integer",
+        "minimum": 3,
+        "maximum": 8,
+        "default": 5,
+        "title": "Rounds"
+      },
+      "budget": {
+        "type": "integer",
+        "minimum": 50,
+        "maximum": 300,
+        "default": 100,
+        "title": "Starting money"
+      }
+    },
+    "additionalProperties": false
+  },
+  "actions": {
+    "bid": {
+      "type": "object",
+      "properties": {
+        "amount": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 300
+        }
+      },
+      "required": [
+        "amount"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

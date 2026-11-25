@@ -1,0 +1,4 @@
+{
+  "summary.win": "{name} 以 {score} 勝出",
+  "agent.bid": "第 {round}/{rounds} 輪，拍品：{lot}。你的估價 {appraisal}，手裡還有 {budget}。出價（0 表示不要）。"
+}

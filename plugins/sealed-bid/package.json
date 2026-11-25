@@ -1,0 +1,16 @@
+{
+  "name": "aiatt-plugin-sealed-bid",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Sealed Bid, a room plugin for AiATT",
+  "license": "Apache-2.0",
+  "scripts": {
+    "dev": "aiatt-plugin dev",
+    "test": "aiatt-plugin test",
+    "build": "aiatt-plugin build",
+    "submit": "aiatt-plugin submit"
+  },
+  "devDependencies": {
+    "@aiatt/plugin-sdk": "^0.1.0"
+  }
+}

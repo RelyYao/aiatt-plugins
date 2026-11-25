@@ -1,0 +1,4 @@
+{
+  "summary.win": "{name} wins with {score}",
+  "agent.bid": "Round {round}/{rounds}, lot: {lot}. Your appraisal is {appraisal}; you have {budget} left. Bid (0 to pass)."
+}
