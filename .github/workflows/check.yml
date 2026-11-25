@@ -1,0 +1,45 @@
+name: check
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  plugins:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '26'
+      - name: Install (no lifecycle scripts)
+        run: npm install --ignore-scripts --no-audit --no-fund
+      - name: Test the plugins this pull request changes
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: node tools/test-plugins.mjs --changed "origin/${BASE_REF}"
+      - name: Test all plugins
+        if: github.event_name != 'pull_request'
+        run: node tools/test-plugins.mjs
+      - name: Security scan on the pull request diff
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: node tools/scan/scan.mjs . --changed "origin/${BASE_REF}"
+      - name: Security scan of the whole tree
+        if: github.event_name != 'pull_request'
+        run: node tools/scan/scan.mjs .
