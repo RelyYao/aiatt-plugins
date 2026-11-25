@@ -1,0 +1,5 @@
+{
+  "summary.win": "{name} wins",
+  "summary.draw": "A draw",
+  "agent.place": "You play {mark}. The board, left to right and top to bottom (cells 0-8, . is empty): {board}. Choose an empty cell."
+}

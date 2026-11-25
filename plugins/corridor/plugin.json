@@ -1,0 +1,128 @@
+{
+  "id": "corridor",
+  "version": "1.0.0",
+  "api": "room-plugin@1",
+  "category": "match",
+  "name": {
+    "zh-CN": "无尽回廊",
+    "en": "Endless Corridor"
+  },
+  "icon": "🗼",
+  "author": "AiATT",
+  "license": "Apache-2.0",
+  "seats": {
+    "min": 1,
+    "max": 2,
+    "teams": "teams",
+    "people": {
+      "min": 2,
+      "max": 8
+    }
+  },
+  "capabilities": [
+    "rng",
+    "turns",
+    "deadlines",
+    "teams",
+    "hidden",
+    "spectators",
+    "aiSeats",
+    "scoring"
+  ],
+  "ai": {
+    "mode": "engine",
+    "price": 0
+  },
+  "listing": {
+    "tier": "labs",
+    "description": {
+      "en": "Roguelike puzzle tower with a daily shared seed: race your squad up 8 floors; floors cleared and time decide the ladder.",
+      "zh-CN": "爬塔 Roguelike × 每日同种子天梯：8 层谜题塔编队速攀，种子公开预解自由，(层数,用时) 定胜负，sha256 逐层揭示"
+    }
+  },
+  "client": {
+    "tone": "indigo",
+    "icon": "grid",
+    "label": "Endless Corridor",
+    "mobile": "./game-packs/corridor/mobile.mjs",
+    "desktop": "./game-corridor.js",
+    "mobileStyles": [
+      "./game-packs/corridor/mobile.css",
+      "./game-packs/shared/puzzle.css"
+    ],
+    "desktopStyles": [
+      "./style-game-corridor.css"
+    ],
+    "desktopDependencies": []
+  },
+  "config": {
+    "type": "object",
+    "properties": {
+      "day": {
+        "type": "string",
+        "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+        "default": "2026-01-01",
+        "description": "The tower's day (UTC+8): the platform always passes it; the default only serves tools such as the conformance check"
+      },
+      "format": {
+        "enum": [
+          "tower",
+          "sprint"
+        ],
+        "default": "tower"
+      }
+    },
+    "additionalProperties": false
+  },
+  "actions": {
+    "toggle": {
+      "type": "object",
+      "properties": {
+        "idx": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": false
+    },
+    "guess": {
+      "type": "object",
+      "properties": {
+        "seq": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 12
+        }
+      },
+      "additionalProperties": false
+    },
+    "hint": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false
+    },
+    "skip": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false
+    },
+    "surrender": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false
+    },
+    "pass": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false
+    }
+  },
+  "timing": {
+    "turnSeconds": 480
+  },
+  "limits": {
+    "callMs": 500,
+    "stateBytes": 262144
+  }
+}

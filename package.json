@@ -1,0 +1,17 @@
+{
+  "name": "aiatt-plugins",
+  "private": true,
+  "description": "AiATT room plugins (room-plugin@1): the plugin interface, developer tools and the platform's own game plugins.",
+  "license": "Apache-2.0",
+  "workspaces": [
+    "plugins/*",
+    "packages/*"
+  ],
+  "engines": {
+    "node": ">=26"
+  },
+  "scripts": {
+    "test": "node tools/test-plugins.mjs",
+    "scan": "node tools/scan/scan.mjs ."
+  }
+}

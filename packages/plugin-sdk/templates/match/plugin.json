@@ -1,0 +1,36 @@
+{
+  "id": "__ID__",
+  "version": "0.1.0",
+  "api": "room-plugin@1",
+  "category": "match",
+  "name": { "zh-CN": "__NAME__", "en": "__NAME__" },
+  "author": "__AUTHOR__",
+  "license": "Apache-2.0",
+  "seats": { "min": 2, "max": 2, "teams": "solo" },
+  "capabilities": ["rng", "turns", "deadlines", "spectators"],
+  "timing": { "turnSeconds": 30 },
+  "ai": { "mode": "none", "price": 0 },
+  "listing": {
+    "tier": "labs",
+    "description": {
+      "zh-CN": "两人轮流在 3×3 的格子里落子，先连成一线的人赢。",
+      "en": "Two players take turns on a 3x3 grid; the first to make a line wins."
+    }
+  },
+  "config": {
+    "type": "object",
+    "properties": {
+      "first": { "enum": ["seat1", "seat2", "random"], "default": "seat1", "title": "Who moves first" }
+    },
+    "additionalProperties": false
+  },
+  "actions": {
+    "place": {
+      "type": "object",
+      "properties": { "cell": { "type": "integer", "minimum": 0, "maximum": 8 } },
+      "required": ["cell"],
+      "additionalProperties": false
+    },
+    "resign": { "type": "object", "additionalProperties": false }
+  }
+}

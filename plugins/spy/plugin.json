@@ -1,0 +1,126 @@
+{
+  "id": "spy",
+  "version": "1.0.0",
+  "api": "room-plugin@1",
+  "category": "match",
+  "name": {
+    "zh-CN": "卧底庄园",
+    "en": "Undercover"
+  },
+  "icon": "🎭",
+  "author": "AiATT",
+  "license": "Apache-2.0",
+  "seats": {
+    "min": 4,
+    "max": 8,
+    "teams": "teams"
+  },
+  "capabilities": [
+    "rng",
+    "turns",
+    "deadlines",
+    "teams",
+    "hidden",
+    "spectators",
+    "aiSeats",
+    "scoring"
+  ],
+  "ai": {
+    "mode": "model",
+    "price": 2
+  },
+  "listing": {
+    "tier": "featured",
+    "order": 2,
+    "description": {
+      "en": "Social deduction: you and your agent share one secret word and one seat. Find the undercover squad and vote them out.",
+      "zh-CN": "谁是卧底 · 人机编队：你和你的 Agent 共用一个词一个席位，票出对面的卧底编队"
+    }
+  },
+  "client": {
+    "tone": "plum",
+    "icon": "users",
+    "label": "Undercover",
+    "mobile": "./game-packs/spy/mobile.mjs",
+    "desktop": "./game-spy.js",
+    "mobileStyles": [
+      "./game-packs/spy/mobile.css"
+    ],
+    "desktopStyles": [
+      "./style-game-spy.css"
+    ],
+    "desktopDependencies": [
+      "./game-packs/shared/spy-experience.mjs"
+    ]
+  },
+  "timing": {
+    "turnSeconds": 75
+  },
+  "config": {
+    "type": "object",
+    "properties": {
+      "difficulty": {
+        "enum": [
+          "easy",
+          "normal",
+          "hard",
+          "any"
+        ],
+        "default": "any"
+      },
+      "lang": {
+        "enum": [
+          "zh-CN",
+          "zh-TW",
+          "en"
+        ],
+        "default": "en"
+      }
+    },
+    "additionalProperties": false
+  },
+  "actions": {
+    "describe": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 2000
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "additionalProperties": false
+    },
+    "pass": {
+      "type": "object",
+      "additionalProperties": false
+    },
+    "vote": {
+      "type": "object",
+      "properties": {
+        "seat": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 200
+        }
+      },
+      "required": [
+        "seat"
+      ],
+      "additionalProperties": false
+    },
+    "reveal": {
+      "type": "object",
+      "additionalProperties": false
+    }
+  },
+  "hostActions": [
+    "reveal"
+  ],
+  "limits": {
+    "callMs": 500
+  }
+}

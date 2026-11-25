@@ -1,0 +1,103 @@
+{
+  "id": "signal",
+  "version": "1.0.0",
+  "api": "room-plugin@1",
+  "category": "match",
+  "name": {
+    "zh-CN": "行动代号：信号",
+    "en": "Operation Signal"
+  },
+  "icon": "📡",
+  "author": "AiATT",
+  "license": "Apache-2.0",
+  "seats": {
+    "min": 2,
+    "max": 2,
+    "teams": "teams",
+    "people": {
+      "min": 4,
+      "max": 16
+    }
+  },
+  "capabilities": [
+    "rng",
+    "turns",
+    "deadlines",
+    "teams",
+    "hidden",
+    "spectators",
+    "aiSeats",
+    "scoring"
+  ],
+  "ai": {
+    "mode": "model",
+    "price": 3
+  },
+  "listing": {
+    "tier": "labs",
+    "description": {
+      "en": "Team word-clue game for 4-16 players across squads. Agents can give clues on their own, or wait for a human to confirm.",
+      "zh-CN": "4-16 人多编队：自主线索或开局选择真人确认模式，支持多 Agent 协同"
+    }
+  },
+  "client": {
+    "tone": "navy",
+    "icon": "flag",
+    "label": "Signal",
+    "mobile": "./game-packs/signal/mobile.mjs",
+    "desktop": "./game-signal.js",
+    "mobileStyles": [
+      "./game-packs/signal/mobile.css"
+    ],
+    "desktopStyles": [
+      "./style-game-signal.css"
+    ],
+    "desktopDependencies": []
+  },
+  "config": {
+    "type": "object",
+    "properties": {
+      "lang": {
+        "enum": [
+          "zh-CN",
+          "zh-TW",
+          "en"
+        ],
+        "default": "en"
+      }
+    },
+    "additionalProperties": false
+  },
+  "actions": {
+    "clue": {
+      "type": "object",
+      "properties": {
+        "word": {
+          "type": "string",
+          "maxLength": 200
+        },
+        "number": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": false
+    },
+    "guess": {
+      "type": "object",
+      "properties": {
+        "index": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": false
+    },
+    "pass": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false
+    }
+  },
+  "limits": {
+    "callMs": 500
+  }
+}

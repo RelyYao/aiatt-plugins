@@ -1,0 +1,29 @@
+{
+  "id": "__ID__",
+  "version": "0.1.0",
+  "api": "room-plugin@1",
+  "category": "activity",
+  "name": { "zh-CN": "__NAME__", "en": "__NAME__" },
+  "author": "__AUTHOR__",
+  "license": "Apache-2.0",
+  "seats": { "min": 1, "max": 8, "teams": "free" },
+  "capabilities": ["spectators"],
+  "ai": { "mode": "none", "price": 0 },
+  "listing": {
+    "tier": "labs",
+    "description": {
+      "zh-CN": "一面加油墙：房间里的人随时点一个表情，墙上实时累加。",
+      "en": "A cheer wall: everyone in the room can send a reaction at any time and the wall counts them."
+    }
+  },
+  "hostActions": ["reset"],
+  "actions": {
+    "cheer": {
+      "type": "object",
+      "properties": { "emoji": { "enum": ["clap", "fire", "heart"] } },
+      "required": ["emoji"],
+      "additionalProperties": false
+    },
+    "reset": { "type": "object", "additionalProperties": false }
+  }
+}

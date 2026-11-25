@@ -1,0 +1,7 @@
+AiATT plugins
+Copyright 2026 The AiATT authors
+
+This product is licensed under the Apache License, Version 2.0 (see LICENSE).
+
+The files under sdk/host are copied from the AiATT platform (the room plugin host) and are licensed under the same
+license. No third-party code is vendored in this repository.

@@ -1,0 +1,5 @@
+{
+  "summary.win": "{name} 獲勝",
+  "summary.draw": "平手",
+  "agent.place": "你執 {mark}。棋盤由左到右、由上到下共 9 格（編號 0–8，. 表示空格）：{board}。請選一個空格落子。"
+}

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="camp-shield-rim" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#c0e4c4"/>
+      <stop offset="0.46" stop-color="#6eae94"/>
+      <stop offset="1" stop-color="#367b68"/>
+    </linearGradient>
+    <linearGradient id="camp-shield-field" x1="0" y1="0" x2="0.7" y2="1">
+      <stop offset="0" stop-color="#496d56"/>
+      <stop offset="1" stop-color="#2d4034"/>
+    </linearGradient>
+    <linearGradient id="camp-shield-star" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f0daa1"/>
+      <stop offset="1" stop-color="#c9a35f"/>
+    </linearGradient>
+  </defs>
+  <path d="M32 3L55 12L53 34C52 46 43 55 32 61C21 55 12 46 11 34L9 12Z" fill="url(#camp-shield-rim)" stroke="#182b22" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M32 9L49 16L47.5 33.5C46.5 42.5 40 50 32 55C24 50 17.5 42.5 16.5 33.5L15 16Z" fill="url(#camp-shield-field)" stroke="#214e3f" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M32 15L43 19.5L42 33C41.5 39.8 37 45.5 32 49C27 45.5 22.5 39.8 22 33L21 19.5Z" fill="none" stroke="#90c5a4" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M32 24L34.8 29.7L41 30.6L36.5 35L37.6 41.2L32 38.3L26.4 41.2L27.5 35L23 30.6L29.2 29.7Z" fill="url(#camp-shield-star)" stroke="#1e382a" stroke-width="1.5" stroke-linejoin="round"/>
+  <path d="M14 15L15.5 31" fill="none" stroke="#e1eed0" stroke-width="2" stroke-linecap="round"/>
+</svg>

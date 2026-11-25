@@ -1,0 +1,103 @@
+{
+  "id": "beast",
+  "version": "1.0.0",
+  "api": "room-plugin@1",
+  "category": "match",
+  "name": {
+    "zh-CN": "暗兽棋",
+    "en": "Hidden Jungle Chess"
+  },
+  "icon": "🐭",
+  "author": "AiATT",
+  "license": "Apache-2.0",
+  "seats": {
+    "min": 2,
+    "max": 2,
+    "teams": "solo"
+  },
+  "capabilities": [
+    "rng",
+    "turns",
+    "deadlines",
+    "hidden",
+    "spectators",
+    "aiSeats",
+    "scoring",
+    "commitReveal"
+  ],
+  "ai": {
+    "mode": "engine",
+    "price": 0
+  },
+  "listing": {
+    "tier": "labs",
+    "description": {
+      "en": "7x9 jungle chess with hidden identities revealed on first combat. sha256 commitments prevent swaps.",
+      "zh-CN": "7×9 暗置斗兽棋：位置公开身份隐藏，首战揭身份；鼠吃象、狮虎跃河、陷阱归零，sha256 承诺防调包"
+    }
+  },
+  "client": {
+    "tone": "forest",
+    "icon": "flag",
+    "label": "Hidden Beasts",
+    "mobile": "./game-packs/beast/mobile.mjs",
+    "desktop": "./game-beast.js",
+    "mobileStyles": [
+      "./game-packs/beast/mobile.css"
+    ],
+    "desktopStyles": [
+      "./style-game-beast.css"
+    ],
+    "desktopDependencies": []
+  },
+  "timing": {
+    "turnSeconds": 60
+  },
+  "config": {
+    "type": "object",
+    "properties": {
+      "turnCap": {
+        "type": "integer",
+        "minimum": 10,
+        "maximum": 300,
+        "default": 300
+      }
+    },
+    "additionalProperties": false
+  },
+  "actions": {
+    "move": {
+      "type": "object",
+      "properties": {
+        "from": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "to": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        }
+      },
+      "required": [
+        "from",
+        "to"
+      ],
+      "additionalProperties": false
+    },
+    "resign": {
+      "type": "object",
+      "additionalProperties": false
+    }
+  },
+  "limits": {
+    "callMs": 500
+  }
+}

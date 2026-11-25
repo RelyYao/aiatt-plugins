@@ -1,0 +1,165 @@
+{
+  "id": "legion",
+  "version": "1.0.0",
+  "api": "room-plugin@1",
+  "category": "match",
+  "name": {
+    "zh-CN": "搭档兵团",
+    "en": "Partner Legion"
+  },
+  "icon": "⚔️",
+  "author": "AiATT",
+  "license": "Apache-2.0",
+  "seats": {
+    "min": 1,
+    "max": 4,
+    "teams": "teams",
+    "people": {
+      "min": 1,
+      "max": 4
+    }
+  },
+  "capabilities": [
+    "rng",
+    "turns",
+    "deadlines",
+    "hidden",
+    "spectators",
+    "aiSeats",
+    "scoring",
+    "commitReveal"
+  ],
+  "ai": {
+    "mode": "engine",
+    "price": 0
+  },
+  "listing": {
+    "tier": "featured",
+    "order": 3,
+    "description": {
+      "en": "Auto-battler for up to four camps: you and your Agent buy units, merge stars, build traits and set the board; battles resolve from a committed seed, and garrisons fill empty camps.",
+      "zh-CN": "自走棋：你和 Agent 共管一个阵营，买兵、合星、凑羁绊、摆阵，服务端按固定种子自动开战；空位由守军补齐"
+    }
+  },
+  "client": {
+    "tone": "ruby",
+    "icon": "flag",
+    "label": "Partner Legion",
+    "mobile": "./game-packs/legion/mobile.mjs",
+    "desktop": "./game-legion.js",
+    "mobileStyles": [
+      "./game-packs/legion/mobile.css"
+    ],
+    "desktopStyles": [
+      "./game-packs/legion/mobile.css"
+    ],
+    "desktopDependencies": []
+  },
+  "config": {
+    "type": "object",
+    "properties": {
+      "prepMs": {
+        "type": "integer",
+        "minimum": 1000,
+        "maximum": 600000,
+        "default": 30000
+      },
+      "battleMs": {
+        "type": "integer",
+        "minimum": 1000,
+        "maximum": 600000,
+        "default": 9000
+      }
+    },
+    "additionalProperties": false
+  },
+  "actions": {
+    "buy": {
+      "type": "object",
+      "properties": {
+        "slot": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": false
+    },
+    "sell": {
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "maxLength": 40
+        }
+      },
+      "additionalProperties": false
+    },
+    "refresh": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false
+    },
+    "move": {
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "maxLength": 40
+        },
+        "cell": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 10
+        }
+      },
+      "additionalProperties": false
+    },
+    "order": {
+      "type": "object",
+      "properties": {
+        "order": {
+          "type": "string",
+          "maxLength": 20
+        }
+      },
+      "additionalProperties": false
+    },
+    "ready": {
+      "type": "object",
+      "properties": {
+        "ready": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "plan": {
+      "type": "object",
+      "properties": {
+        "plan": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    },
+    "autoplay": {
+      "type": "object",
+      "properties": {
+        "ready": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "pass": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false
+    }
+  },
+  "limits": {
+    "callMs": 500,
+    "stateBytes": 262144
+  }
+}

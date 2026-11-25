@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96">
+  <defs>
+    <radialGradient id="dk-face" cx="50%" cy="42%" r="62%">
+      <stop offset="0" stop-color="#22323c"/>
+      <stop offset="1" stop-color="#131f27"/>
+    </radialGradient>
+    <linearGradient id="dk-ring" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3d5261"/>
+      <stop offset="1" stop-color="#1a2830"/>
+    </linearGradient>
+  </defs>
+  <circle cx="48" cy="48" r="44" fill="url(#dk-ring)" stroke="#0d161d" stroke-width="3"/>
+  <circle cx="48" cy="48" r="37" fill="url(#dk-face)" stroke="#31485a" stroke-width="2"/>
+  <g stroke="#4a6070" stroke-width="3" stroke-linecap="round">
+    <path d="M48 8v7"/><path d="M75.5 20.5l-4.9 4.9"/><path d="M88 48h-7"/>
+    <path d="M75.5 75.5l-4.9-4.9"/><path d="M48 88v-7"/><path d="M20.5 75.5l4.9-4.9"/>
+    <path d="M8 48h7"/><path d="M20.5 20.5l4.9 4.9"/>
+  </g>
+  <g stroke="rgba(255,119,123,.5)" stroke-width="2.5" stroke-linecap="round">
+    <path d="M67.9 11.2l-2.4 6.6"/><path d="M81.5 20.6l-4.6 5.2"/><path d="M87.8 34.1l-6.6 2.4"/>
+    <path d="M84.1 61.9l-6.6-2.4"/>
+  </g>
+  <g stroke="rgba(103,229,195,.5)" stroke-width="2.5" stroke-linecap="round">
+    <path d="M28.1 11.2l2.4 6.6"/><path d="M14.5 20.6l4.6 5.2"/><path d="M8.2 34.1l6.6 2.4"/>
+    <path d="M11.9 61.9l6.6-2.4"/>
+  </g>
+  <circle cx="48" cy="48" r="26" fill="#1b2b34" stroke="#31485a" stroke-width="2"/>
+  <g fill="none" stroke="#48606f" stroke-width="2">
+    <circle cx="48" cy="48" r="21" stroke-dasharray="3 5"/>
+  </g>
+  <path d="M48 30v14" stroke="#f4b363" stroke-width="4.5" stroke-linecap="round"/>
+  <circle cx="48" cy="48" r="5" fill="#f4b363" stroke="#a06a25" stroke-width="1.5"/>
+</svg>

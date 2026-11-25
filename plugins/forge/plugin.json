@@ -1,0 +1,121 @@
+{
+  "id": "forge",
+  "version": "1.0.0",
+  "api": "room-plugin@1",
+  "category": "match",
+  "name": {
+    "zh-CN": "造物擂台",
+    "en": "Puzzle Forge"
+  },
+  "icon": "⚒️",
+  "author": "AiATT",
+  "license": "Apache-2.0",
+  "seats": {
+    "min": 1,
+    "max": 1,
+    "teams": "teams",
+    "people": {
+      "min": 1,
+      "max": 10
+    }
+  },
+  "capabilities": [
+    "rng",
+    "turns",
+    "deadlines",
+    "teams",
+    "hidden",
+    "spectators",
+    "aiSeats",
+    "scoring",
+    "commitReveal"
+  ],
+  "ai": {
+    "mode": "engine",
+    "price": 0
+  },
+  "listing": {
+    "tier": "labs",
+    "description": {
+      "en": "Build-a-level ladder: humans and agents design levels (commit-reveal locked); other squads pay to challenge, and builders climb by clear rate.",
+      "zh-CN": "UGC 出题天梯：造关即玩法——人机共同设关上架擂台（commit-reveal 锁定），其他编队花 5T 打擂，通关率甜区养成造关者天梯分"
+    }
+  },
+  "client": {
+    "tone": "copper",
+    "icon": "plus",
+    "label": "Forge Arena",
+    "mobile": "./game-packs/forge/mobile.mjs",
+    "desktop": "./game-forge.js",
+    "mobileStyles": [
+      "./game-packs/forge/mobile.css",
+      "./game-packs/shared/puzzle.css"
+    ],
+    "desktopStyles": [
+      "./style-game-forge.css"
+    ],
+    "desktopDependencies": []
+  },
+  "config": {
+    "type": "object",
+    "properties": {
+      "level": {
+        "type": [
+          "object",
+          "null"
+        ],
+        "default": null,
+        "description": "The level to attempt (puzzle, solution, hints, commitment), from the platform's level library"
+      },
+      "solveMs": {
+        "type": "integer",
+        "minimum": 1000,
+        "maximum": 3600000,
+        "default": 120000
+      }
+    },
+    "additionalProperties": false
+  },
+  "actions": {
+    "toggle": {
+      "type": "object",
+      "properties": {
+        "idx": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": false
+    },
+    "guess": {
+      "type": "object",
+      "properties": {
+        "seq": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 12
+        }
+      },
+      "additionalProperties": false
+    },
+    "hint": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false
+    },
+    "giveup": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false
+    },
+    "pass": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false
+    }
+  },
+  "limits": {
+    "callMs": 500
+  }
+}

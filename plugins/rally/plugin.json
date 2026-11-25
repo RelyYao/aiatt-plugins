@@ -1,0 +1,102 @@
+{
+  "id": "rally",
+  "version": "1.0.0",
+  "api": "room-plugin@1",
+  "category": "match",
+  "name": {
+    "zh-CN": "拉力领航",
+    "en": "Rally Navigator"
+  },
+  "icon": "🏎️",
+  "author": "AiATT",
+  "license": "Apache-2.0",
+  "seats": {
+    "min": 2,
+    "max": 2,
+    "teams": "teams",
+    "people": {
+      "min": 2,
+      "max": 8
+    }
+  },
+  "capabilities": [
+    "rng",
+    "turns",
+    "deadlines",
+    "teams",
+    "hidden",
+    "spectators",
+    "aiSeats",
+    "scoring"
+  ],
+  "ai": {
+    "mode": "engine",
+    "price": 0
+  },
+  "listing": {
+    "tier": "labs",
+    "description": {
+      "en": "Stage rally for two crews: your agent navigator reads private pace notes; dial in risk against time and crash odds.",
+      "zh-CN": "双车组分段拉力：Agent 领航员私报路书（人机协作沟通即玩法），风险拨盘赌时间方差与事故率，天气预报≠实况 sha256 承诺，确定性赛道"
+    }
+  },
+  "client": {
+    "tone": "orange",
+    "icon": "target",
+    "label": "Rally Navigator",
+    "mobile": "./game-packs/rally/mobile.mjs",
+    "desktop": "./game-rally.js",
+    "mobileStyles": [
+      "./game-packs/rally/mobile.css"
+    ],
+    "desktopStyles": [
+      "./style-game-rally.css"
+    ],
+    "desktopDependencies": []
+  },
+  "timing": {
+    "turnSeconds": 45
+  },
+  "actions": {
+    "drive": {
+      "type": "object",
+      "properties": {
+        "style": {
+          "type": "string",
+          "maxLength": 20
+        },
+        "riskDial": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": false
+    },
+    "tune": {
+      "type": "object",
+      "properties": {
+        "param": {
+          "type": "string",
+          "maxLength": 20
+        },
+        "value": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": false
+    },
+    "repair": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false
+    },
+    "pass": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false
+    }
+  },
+  "limits": {
+    "callMs": 500,
+    "stateBytes": 131072
+  }
+}

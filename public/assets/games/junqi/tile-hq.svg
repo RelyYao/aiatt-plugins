@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 64 64" role="img" aria-labelledby="tile-hq-title tile-hq-desc">
+  <title id="tile-hq-title">大本营</title>
+  <desc id="tile-hq-desc">蓝金色司令部堡垒，中央塔楼升起军旗，两翼城垛守护金边拱门。</desc>
+  <defs>
+    <linearGradient id="tile-hq-blue" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#547a95"/>
+      <stop offset="1" stop-color="#263d52"/>
+    </linearGradient>
+    <linearGradient id="tile-hq-gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#eddaa1"/>
+      <stop offset="0.5" stop-color="#c9a35f"/>
+      <stop offset="1" stop-color="#997240"/>
+    </linearGradient>
+  </defs>
+  <path d="M3 54L8 49H56L61 54V60H3Z" fill="#22332e" stroke="#d0b476" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M33 5H49L44 10L49 15H33Z" fill="url(#tile-hq-gold)" stroke="#23382f" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M32 4V25" fill="none" stroke="#22332e" stroke-width="5" stroke-linecap="round"/>
+  <path d="M32 4V25" fill="none" stroke="#e3c789" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M7 51V28H13V33H18V28H24V51ZM40 51V28H46V33H51V28H57V51Z" fill="url(#tile-hq-blue)" stroke="#1f302b" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M8 28H13V33H18V28H23M41 28H46V33H51V28H56" fill="none" stroke="#d7b877" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M22 53V25L32 18L42 25V53Z" fill="url(#tile-hq-blue)" stroke="#24352d" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M20 26L32 17L44 26L41 29L32 23L23 29Z" fill="url(#tile-hq-gold)" stroke="#23352d" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M23 30V52M41 30V52" fill="none" stroke="#d0b476" stroke-width="2"/>
+  <path d="M27 53V43A5 5 0 0 1 37 43V53Z" fill="#172b35" stroke="#e1c789" stroke-width="2.5"/>
+  <g fill="url(#tile-hq-gold)">
+    <path d="M12 38H17V44H12ZM47 38H52V44H47Z"/>
+    <path d="M32 29L33.5 32L37 32.5L34.5 35L35 38.5L32 36.9L29 38.5L29.5 35L27 32.5L30.5 32Z"/>
+    <path d="M6 53H58V57H6Z"/>
+  </g>
+</svg>

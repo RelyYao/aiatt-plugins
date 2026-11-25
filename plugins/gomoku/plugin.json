@@ -1,0 +1,82 @@
+{
+  "id": "gomoku",
+  "version": "1.0.0",
+  "api": "room-plugin@1",
+  "category": "match",
+  "bridge": {
+    "game": "gomoku"
+  },
+  "name": {
+    "zh-CN": "五子棋",
+    "en": "Gomoku"
+  },
+  "icon": "♟️",
+  "author": "AiATT",
+  "license": "Apache-2.0",
+  "seats": {
+    "min": 2,
+    "max": 2,
+    "teams": "solo"
+  },
+  "capabilities": [
+    "rng",
+    "turns",
+    "hidden",
+    "spectators",
+    "aiSeats",
+    "scoring"
+  ],
+  "ai": {
+    "mode": "engine",
+    "price": 0
+  },
+  "listing": {
+    "tier": "casual",
+    "description": {
+      "en": "15x15, black moves first, five in a row wins. Play a friend or warm up against the built-in bot.",
+      "zh-CN": "15×15 人机/人对 黑先行，五连即胜（内置 Bot 可陪练）"
+    }
+  },
+  "client": {
+    "tone": "green",
+    "icon": "grid",
+    "label": "Gomoku",
+    "mobile": "./game-packs/gomoku/mobile.mjs",
+    "desktop": null,
+    "mobileStyles": [
+      "./game-packs/gomoku/mobile.css"
+    ],
+    "desktopStyles": [],
+    "desktopDependencies": []
+  },
+  "actions": {
+    "place": {
+      "type": "object",
+      "properties": {
+        "x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 14
+        },
+        "y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 14
+        }
+      },
+      "required": [
+        "x",
+        "y"
+      ],
+      "additionalProperties": false
+    },
+    "resign": {
+      "type": "object",
+      "additionalProperties": false
+    }
+  },
+  "limits": {
+    "callMs": 500,
+    "engineMs": 2000
+  }
+}

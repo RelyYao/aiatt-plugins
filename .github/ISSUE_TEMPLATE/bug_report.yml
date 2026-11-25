@@ -1,0 +1,32 @@
+name: 问题反馈 / Bug report
+description: 插件规则、界面或开发者工具的问题 / A problem with a plugin's rules, UI or the developer tools
+labels: ["type: plugin-fix"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        安全问题请不要在这里提交，见 SECURITY.md。 / Do not report security problems here; see SECURITY.md.
+  - type: input
+    id: plugin
+    attributes:
+      label: 插件或工具 / Plugin or tool
+      placeholder: gomoku, aiatt-plugin dev, ...
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: 发生了什么 / What happened
+      description: 期望的和实际的结果 / Expected and actual result
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 复现步骤 / Steps to reproduce
+      description: 如果是对局问题，请附上种子和动作序列（不要贴令牌） / For a match problem, include the seed and the action sequence (no tokens)
+  - type: input
+    id: env
+    attributes:
+      label: 环境 / Environment
+      placeholder: Node 26.x, OS, browser

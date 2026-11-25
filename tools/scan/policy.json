@@ -1,0 +1,15 @@
+{
+  "allowEmails": [
+    "^noreply@",
+    "^security@aiatt\\.cn$",
+    "^conduct@aiatt\\.cn$"
+  ],
+  "allowBinary": [
+    {
+      "file": "public/game-packs/**",
+      "extensions": [
+        ".webp"
+      ]
+    }
+  ]
+}

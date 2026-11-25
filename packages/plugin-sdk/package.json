@@ -1,0 +1,28 @@
+{
+  "name": "@aiatt/plugin-sdk",
+  "version": "0.1.0",
+  "description": "Developer tools for AiATT room plugins (room-plugin@1): skeleton, local simulator, conformance tests, build and submit.",
+  "license": "Apache-2.0",
+  "type": "commonjs",
+  "main": "./src/index.js",
+  "types": "./types/plugin.d.ts",
+  "bin": {
+    "aiatt-plugin": "./bin/aiatt-plugin.mjs"
+  },
+  "exports": {
+    ".": "./src/index.js",
+    "./store-shim": "./src/store-shim.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "bin",
+    "src",
+    "host",
+    "templates",
+    "types",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=22"
+  }
+}

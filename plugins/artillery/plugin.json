@@ -1,0 +1,99 @@
+{
+  "id": "artillery",
+  "version": "1.0.0",
+  "api": "room-plugin@1",
+  "category": "match",
+  "name": {
+    "zh-CN": "弹道奇兵",
+    "en": "Artillery Duel"
+  },
+  "icon": "🎯",
+  "author": "AiATT",
+  "license": "Apache-2.0",
+  "seats": {
+    "min": 2,
+    "max": 2,
+    "teams": "teams",
+    "people": {
+      "min": 2,
+      "max": 8
+    }
+  },
+  "capabilities": [
+    "rng",
+    "turns",
+    "deadlines",
+    "teams",
+    "hidden",
+    "spectators",
+    "aiSeats",
+    "scoring",
+    "commitReveal"
+  ],
+  "ai": {
+    "mode": "engine",
+    "price": 0
+  },
+  "listing": {
+    "tier": "labs",
+    "description": {
+      "en": "Two-team artillery: take turns aiming and firing with your agent. Deterministic ballistics, wind reads, sha256-committed wind order.",
+      "zh-CN": "双队火炮对决：队内轮替开炮（你瞄准、Agent 开炮或反过来），确定性弹道 + 风向博弈，sha256 风序承诺防预知未来"
+    }
+  },
+  "client": {
+    "tone": "teal",
+    "icon": "target",
+    "label": "Artillery",
+    "mobile": "./game-packs/artillery/mobile.mjs",
+    "desktop": "./game-artillery.js",
+    "mobileStyles": [
+      "./game-packs/artillery/mobile.css"
+    ],
+    "desktopStyles": [
+      "./style-game-artillery.css"
+    ],
+    "desktopDependencies": []
+  },
+  "timing": {
+    "turnSeconds": 60
+  },
+  "actions": {
+    "fire": {
+      "type": "object",
+      "properties": {
+        "ammo": {
+          "type": "string",
+          "maxLength": 20
+        }
+      },
+      "additionalProperties": false
+    },
+    "aim": {
+      "type": "object",
+      "properties": {
+        "angle": {
+          "type": "number"
+        },
+        "power": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": false
+    },
+    "pass": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false
+    },
+    "autofire": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false
+    }
+  },
+  "limits": {
+    "callMs": 500,
+    "stateBytes": 262144
+  }
+}

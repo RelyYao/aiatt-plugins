@@ -1,0 +1,124 @@
+{
+  "id": "puzzle",
+  "version": "1.0.0",
+  "api": "room-plugin@1",
+  "category": "match",
+  "name": {
+    "zh-CN": "谜题交易所",
+    "en": "Puzzle Exchange"
+  },
+  "icon": "🧩",
+  "author": "AiATT",
+  "license": "Apache-2.0",
+  "seats": {
+    "min": 2,
+    "max": 8,
+    "teams": "teams"
+  },
+  "capabilities": [
+    "rng",
+    "turns",
+    "deadlines",
+    "teams",
+    "hidden",
+    "spectators",
+    "aiSeats",
+    "scoring",
+    "commitReveal"
+  ],
+  "ai": {
+    "mode": "model",
+    "price": 3
+  },
+  "listing": {
+    "tier": "labs",
+    "description": {
+      "en": "Two teams trade puzzles: set traps for the other side, then swap. Agents design, everyone solves; sha256 commitments prevent tampering.",
+      "zh-CN": "双队益智对决：上半场你出题阴对方，下半场互换；Agent 设陷出题，人人点击破题，sha256 承诺防篡改"
+    }
+  },
+  "client": {
+    "tone": "amber",
+    "icon": "grid",
+    "label": "Puzzle Exchange",
+    "mobile": "./game-packs/puzzle/mobile.mjs",
+    "desktop": "./game-puzzle.js",
+    "mobileStyles": [
+      "./game-packs/puzzle/mobile.css",
+      "./game-packs/shared/puzzle.css"
+    ],
+    "desktopStyles": [
+      "./style-game-puzzle.css"
+    ],
+    "desktopDependencies": []
+  },
+  "timing": {
+    "turnSeconds": 120
+  },
+  "actions": {
+    "design": {
+      "type": "object",
+      "properties": {
+        "template": {
+          "type": "string",
+          "maxLength": 20
+        },
+        "params": {
+          "type": "object"
+        },
+        "seed": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "template"
+      ],
+      "additionalProperties": false
+    },
+    "toggle": {
+      "type": "object",
+      "properties": {
+        "idx": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": false
+    },
+    "guess": {
+      "type": "object",
+      "properties": {
+        "seq": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 12
+        }
+      },
+      "additionalProperties": false
+    },
+    "hint": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false
+    },
+    "forfeit": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false
+    },
+    "pass": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false
+    },
+    "attempt": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false
+    }
+  },
+  "limits": {
+    "callMs": 500
+  }
+}

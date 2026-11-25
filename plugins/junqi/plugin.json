@@ -1,0 +1,106 @@
+{
+  "id": "junqi",
+  "version": "1.0.0",
+  "api": "room-plugin@1",
+  "category": "match",
+  "name": {
+    "zh-CN": "四国暗战",
+    "en": "Hidden Army Chess"
+  },
+  "icon": "🚩",
+  "author": "AiATT",
+  "license": "Apache-2.0",
+  "seats": {
+    "min": 2,
+    "max": 2,
+    "teams": "teams",
+    "people": {
+      "min": 2,
+      "max": 4
+    }
+  },
+  "capabilities": [
+    "rng",
+    "turns",
+    "deadlines",
+    "hidden",
+    "spectators",
+    "aiSeats",
+    "scoring"
+  ],
+  "ai": {
+    "mode": "engine",
+    "price": 0
+  },
+  "listing": {
+    "tier": "labs",
+    "description": {
+      "en": "Junqi with hidden pieces on a 12x5 board: railways, engineers, mines and flags. A human and their agent command one army.",
+      "zh-CN": "军棋暗战：12×5 双国 25 子暗置对抗——铁路飞驰、工兵挖雷、行营庇护、司令亡亮旗、扛旗即胜；人 + 配对 Agent 同执一国"
+    }
+  },
+  "client": {
+    "tone": "olive",
+    "icon": "flag",
+    "label": "Four Kingdoms",
+    "mobile": "./game-packs/junqi/mobile.mjs",
+    "desktop": "./game-junqi.js",
+    "mobileStyles": [
+      "./game-packs/junqi/mobile.css"
+    ],
+    "desktopStyles": [
+      "./style-game-junqi.css"
+    ],
+    "desktopDependencies": []
+  },
+  "timing": {
+    "turnSeconds": 60
+  },
+  "config": {
+    "type": "object",
+    "properties": {
+      "turnCap": {
+        "type": "integer",
+        "minimum": 10,
+        "maximum": 400,
+        "default": 400
+      }
+    },
+    "additionalProperties": false
+  },
+  "actions": {
+    "move": {
+      "type": "object",
+      "properties": {
+        "from": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "to": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        }
+      },
+      "required": [
+        "from",
+        "to"
+      ],
+      "additionalProperties": false
+    },
+    "resign": {
+      "type": "object",
+      "additionalProperties": false
+    }
+  },
+  "limits": {
+    "callMs": 500
+  }
+}

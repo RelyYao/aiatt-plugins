@@ -1,0 +1,25 @@
+/* SPDX-License-Identifier: Apache-2.0 */
+/* gomoku phone game package. */
+.mg-go-board{display:grid;grid-template-columns:repeat(15,minmax(0,1fr));width:100%;max-width:520px;align-self:center;background:#d9b982;border:9px solid #caa46a;border-radius:8px;aspect-ratio:1;box-shadow:0 7px 18px #3b2b1510;touch-action:manipulation}
+.mg-go-cell{aspect-ratio:1;position:relative;border:0;padding:0;background:transparent;min-width:0;appearance:none}
+.mg-go-cell:before,.mg-go-cell:after{content:"";position:absolute;background:#70542c77;pointer-events:none}
+.mg-go-cell:before{left:0;right:0;height:1px;top:50%}
+.mg-go-cell:after{top:0;bottom:0;width:1px;left:50%}
+.mg-go-cell span{position:absolute;z-index:1;width:86%;height:86%;left:7%;top:7%;border-radius:50%;pointer-events:none}
+.mg-stone-1 span{background:#242924;border:1px solid #111;box-shadow:inset -2px -2px 3px #0005,0 1px 2px #0003}
+.mg-stone-2 span{background:#f9f8f2;border:1px solid #b3afa4;box-shadow:inset -2px -2px 3px #71644522,0 1px 2px #0003}
+.mg-go-cell.mg-selected span{background:#2f694c55;outline:2px solid var(--green);outline-offset:-2px}
+.mg-game .mg-go-cell:disabled{opacity:1}
+/* round 5: game feel — hoshi points, the last stone marked, the winning five lit, whose turn it is */
+.mg-go-board{background:linear-gradient(135deg,#e4c48c,#d7b47c 55%,#d0ab70);box-shadow:inset 0 0 0 1px #fff4,0 9px 22px #3b2b1520}
+.mg-go-cell.is-star{background:radial-gradient(circle,#70542c 0 2.6px,transparent 3.2px)}
+.mg-go-cell.is-last span::after{content:"";position:absolute;left:50%;top:50%;width:28%;height:28%;margin:-14% 0 0 -14%;border-radius:50%;background:var(--brand-orange,#ff8a3d);box-shadow:0 0 0 1.5px #fffa}
+.mg-go-cell.is-win span{box-shadow:0 0 0 2px var(--brand-orange,#ff8a3d),0 0 10px #ff8a3dbb}
+.mg-go-side{display:inline-flex;align-items:center;gap:7px;min-width:0;padding:5px 12px 5px 8px;border-radius:999px;border:1.5px solid transparent;font-weight:700;color:var(--muted);transition:border-color .2s,background-color .2s,color .2s}
+.mg-go-side.is-turn{color:var(--ink);border-color:var(--ink);background:var(--surface)}
+.mg-go-dot{flex:none;width:16px;height:16px;border-radius:50%}
+.mg-go-dot.is-black{background:#242924;border:1px solid #111}
+.mg-go-dot.is-white{background:#f9f8f2;border:1px solid #b3afa4}
+.mg-go-side.is-turn .mg-go-dot{animation:mg-go-pulse 1.4s ease-in-out infinite}
+@keyframes mg-go-pulse{50%{transform:scale(1.22)}}
+@media(prefers-reduced-motion:reduce){.mg-go-side.is-turn .mg-go-dot{animation:none}}
